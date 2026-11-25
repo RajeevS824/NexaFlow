@@ -12,8 +12,21 @@
 //   - Orchestrator routes have no "/api" prefix (/run, /status/{id}, ...).
 // ─────────────────────────────────────────────────────────────
 
-export const API_BASE_URL =
-  import.meta.env.VITE_BUSINESS_MAP_API_BASE_URL || "http://127.0.0.1:8020";
+function resolveBaseUrl(raw) {
+  const isAiStudio =
+    typeof window !== "undefined" &&
+    ((window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") ||
+      window.location.port === "3000");
+  if (!raw) return isAiStudio ? "/bm" : "http://127.0.0.1:8020";
+  if (isAiStudio && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/i.test(raw)) {
+    return "/bm";
+  }
+  return raw;
+}
+
+export const API_BASE_URL = resolveBaseUrl(
+  import.meta.env.VITE_BUSINESS_MAP_API_BASE_URL
+);
 
 const AUTH_STORAGE_KEY = "nexaflow_auth";
 

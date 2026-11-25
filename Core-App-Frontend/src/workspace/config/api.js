@@ -15,8 +15,21 @@
 // one of the two services at the wrong backend. This used to read a
 // third name, VITE_API_BASE_URL, that the shared .env never set, so
 // it always fell back to the localhost default even in production.
-export const API_BASE_URL =
-  import.meta.env.VITE_DOCUMENT_PARSER_API_BASE_URL || "http://127.0.0.1:8000";
+function resolveDocumentParserBaseUrl(raw) {
+  const isAiStudio =
+    typeof window !== "undefined" &&
+    ((window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") ||
+      window.location.port === "3000");
+  if (!raw) return isAiStudio ? "" : "http://127.0.0.1:8000";
+  if (isAiStudio && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/i.test(raw)) {
+    return "";
+  }
+  return raw;
+}
+
+export const API_BASE_URL = resolveDocumentParserBaseUrl(
+  import.meta.env.VITE_DOCUMENT_PARSER_API_BASE_URL
+);
 
 const AUTH_STORAGE_KEY = "nexaflow_auth";
 

@@ -13,7 +13,23 @@
  * between the two backends would silently break whichever one you
  * didn't mean to point at your deployed URL.
  */
-export const API_BASE_URL = import.meta.env.VITE_MAIN_API_BASE_URL || "";
+function resolveBaseUrl(raw, fallback = "") {
+  if (!raw) return fallback;
+  if (
+    typeof window !== "undefined" &&
+    /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/i.test(raw)
+  ) {
+    const isLocalHost =
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1";
+    if (!isLocalHost || window.location.port === "3000") {
+      return fallback;
+    }
+  }
+  return raw;
+}
+
+export const API_BASE_URL = resolveBaseUrl(import.meta.env.VITE_MAIN_API_BASE_URL, "");
 /**
  * Generic fetch wrapper that attaches the Authorization header
  * when a token is provided, and returns parsed JSON or throws

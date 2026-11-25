@@ -80,3 +80,8 @@
 
 # Runtime logs
 **/*.log
+
+# AI Studio environment preview backend (excluded from GitHub pushes)
+/server.mjs
+/server/
+
