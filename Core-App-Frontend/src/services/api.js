@@ -13,14 +13,7 @@
  * between the two backends would silently break whichever one you
  * didn't mean to point at your deployed URL.
  */
-function resolveBaseUrl(raw, fallback = "") {
-  if (!raw || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/i.test(raw)) {
-    return fallback;
-  }
-  return raw;
-}
-
-export const API_BASE_URL = resolveBaseUrl(import.meta.env.VITE_MAIN_API_BASE_URL, "");
+export const API_BASE_URL = import.meta.env.VITE_MAIN_API_BASE_URL || "";
 /**
  * Generic fetch wrapper that attaches the Authorization header
  * when a token is provided, and returns parsed JSON or throws

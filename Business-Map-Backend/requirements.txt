@@ -1,0 +1,17 @@
+# ─────────────────────────────────────────────────────────────
+# ROOT REQUIREMENTS — installs everything needed to run the full
+# backend locally (audio service + video service + orchestrator)
+# in a single virtual environment.
+#
+#   pip install -r requirements.txt
+#
+# Each service also has its own requirements file if you ever want
+# to install/run a single service in isolation:
+#   AudioVideoPipeline/audio_service/requirements_audio.txt
+#   AudioVideoPipeline/video_service/requirements_video.txt
+#   AudioVideoPipeline/Orchestrator/requirements_orchestrator.txt
+# ─────────────────────────────────────────────────────────────
+
+-r AudioVideoPipeline/audio_service/requirements_audio.txt
+-r AudioVideoPipeline/video_service/requirements_video.txt
+-r AudioVideoPipeline/Orchestrator/requirements_orchestrator.txt

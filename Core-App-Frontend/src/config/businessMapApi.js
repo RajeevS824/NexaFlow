@@ -12,17 +12,8 @@
 //   - Orchestrator routes have no "/api" prefix (/run, /status/{id}, ...).
 // ─────────────────────────────────────────────────────────────
 
-function resolveBaseUrl(raw, fallback = "/bm") {
-  if (!raw || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/i.test(raw)) {
-    return fallback;
-  }
-  return raw;
-}
-
-export const API_BASE_URL = resolveBaseUrl(
-  import.meta.env.VITE_BUSINESS_MAP_API_BASE_URL,
-  "/bm"
-);
+export const API_BASE_URL =
+  import.meta.env.VITE_BUSINESS_MAP_API_BASE_URL || "http://127.0.0.1:8020";
 
 const AUTH_STORAGE_KEY = "nexaflow_auth";
 

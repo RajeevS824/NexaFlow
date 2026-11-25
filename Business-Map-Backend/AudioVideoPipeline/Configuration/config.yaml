@@ -1,0 +1,222 @@
+# =============================================================
+# SHARED CONFIG — AudioVideoPipeline
+# Used by: audio_service, video_service, orchestrator
+#
+# NOTE: This is the NATIVE (non-Docker) config — hosts are "localhost"
+# because in a native run all 3 services share the same machine/loopback
+# interface. For Docker, docker-compose.yml points every service at
+# AudioVideoPipeline/Configuration/config.docker.yaml instead (via the
+# CONFIG_PATH env var) — same file, but with container service names
+# instead of localhost, and database.enabled forced to true. See
+# config.docker.yaml in this same folder.
+# =============================================================
+
+# -------------------------------------------------------------
+# SERVICE URLS
+# -------------------------------------------------------------
+services:
+  audio:
+    url: "http://localhost:8021"
+    timeout_sec: 1800
+  video:
+    url: "http://localhost:8022"
+    timeout_sec: 1800
+
+# -------------------------------------------------------------
+# REDIS
+# -------------------------------------------------------------
+redis:
+  host: "localhost"
+  port: 6379
+  db: 0
+  enabled: true
+  queue_name_audio: "audio_jobs"
+  queue_name_video: "video_jobs"
+  result_key_audio: "audio_results"
+  result_key_video: "video_results"
+
+# -------------------------------------------------------------
+# ORCHESTRATOR
+# -------------------------------------------------------------
+orchestrator:
+  fastapi_port: 8020
+  poll_interval_sec: 3
+  # How long the orchestrator waits for the video service to finish
+  # analyzing a video before giving up and marking the job FAILED.
+  # 3600s (60 min) is fine on GPU. On CPU-only machines, Qwen3-VL
+  # inference is much slower and can legitimately take well over an
+  # hour depending on video length — raised to 4 hours (14400s) here so
+  # a slow-but-successful CPU run isn't killed as a false timeout.
+  # Override via env var if needed: ORCHESTRATOR_POLL_TIMEOUT_SEC.
+  poll_timeout_sec: 14400
+  run_audio: true
+  run_video: true
+
+# -------------------------------------------------------------
+# OUTPUT PATHS
+# -------------------------------------------------------------
+output:
+  base_dir: "output"
+  audio_json_dir: "output/audio_json"
+  video_json_dir: "output/video_json"
+  report_dir: "output/reports"
+
+# -------------------------------------------------------------
+# AUDIO SERVICE (pipeline_v3_1_production.py)
+# -------------------------------------------------------------
+models:
+  whisper:
+    name: "large-v3"
+    device: "cuda"
+    compute_type: "float16"
+
+audio:
+  max_duration_sec: 3600
+  max_file_size_mb: 500
+  chunk_size_bytes: 1048576
+
+latency_sla:
+  max_inference_sec: 120
+  subprocess_timeout_sec: 30
+
+retry:
+  max_attempts: 3
+  delay_sec: 2
+  backoff_multiplier: 2.0
+
+rate_limiting:
+  enabled: true
+  requests_per_minute: 60
+  burst_allowed: 10
+
+circuit_breaker:
+  failure_threshold: 5
+  recovery_timeout_sec: 60
+
+threading:
+  min_workers: 2
+  max_workers_limit: 32
+
+deployment:
+  fastapi_port: 8021
+  workers: 1
+
+# -------------------------------------------------------------
+# VIDEO SERVICE
+# -------------------------------------------------------------
+pipeline:
+  window_step: 1
+
+# -------------------------------------------------------------
+# LOGGING
+# -------------------------------------------------------------
+logging:
+  level: "INFO"
+  dir: "logs"
+
+# -------------------------------------------------------------
+# CLEANUP
+# -------------------------------------------------------------
+cleanup:
+  temp_dir: "tmp/audio_pipeline"
+
+# -------------------------------------------------------------
+# DATABASE (PostgreSQL) — optional durable job storage
+# -------------------------------------------------------------
+# Disabled by default so the app runs with zero DB setup (in-memory JOBS
+# dict only). Set enabled: true (or DB_ENABLED=true) once PostgreSQL is
+# running. The database is created automatically on the first start; if it
+# already exists it is reused. The PG_HOST / PG_PORT / PG_USER / PG_PASSWORD
+# env vars override this section — never put a real password in config.yaml.
+# database:
+#   enabled: false
+#   server: "localhost"
+#   port: 5432
+#   database: "suppi_db"
+#   # Schema for this app's tables. Keep it the same as the DB_SCHEMA used by
+#   # Core-App-Backend ("public" by default).
+#   schema: "public"
+#   username: "postgres"
+#   password: ""
+
+# -------------------------------------------------------------
+# LLM ANALYSIS — Primary + Secondary API with retry/fallback
+# -------------------------------------------------------------
+# SECURITY: no secret values live here anymore. API keys are read from
+# environment variables at runtime (set via a local .env file — see
+# .env.example at the repo root — loaded by run_backend.py).
+#
+# Fallback Flow:
+#   1. Try Primary API using cohere/north-mini:free
+#   2. If it fails after all retries: switch to Secondary API, try MODEL_1
+#   3. If MODEL_1 fails after retries: try MODEL_2
+#   4. If all models fail: return a proper error without crashing the pipeline
+llm:
+  # Retry configuration — applies to every LLM call in the project
+  retry:
+    max_attempts: 3
+    delay_sec: 2
+    backoff_multiplier: 2.0
+    timeout_sec: 300
+
+  # Primary API
+  primary:
+    api_key_env: "PRIMARY_LLM_API_KEY"        # env var name (never the key itself)
+    base_url: "https://openrouter.ai/api/v1"
+    model: "cohere/north-mini-code:free"
+
+  # Secondary API — used if the primary fails after all retries
+  secondary:
+    api_key_env: "SECONDARY_LLM_API_KEY"      # env var name (never the key itself)
+    base_url: ""
+    model_1: ""
+    model_2: ""
+
+  # Backward compatibility: the old single-model config is still read
+  # by any code that hasn't been updated yet. The structured primary/
+  # secondary config above takes precedence.
+  openrouter_api_key: ""
+  model: "cohere/north-mini-code:free"
+
+  # Report-generation is split into fixed-size time windows and one LLM call
+  # is made per window (see job_manager.py) instead of one call over the
+  # whole video — this is what keeps long videos from only showing start/end
+  # steps in the output.
+  chunk_duration_sec: 60
+  chunk_concurrency: 3
+
+
+# -------------------------------------------------------------
+# VIDEO SERVICE DEPLOYMENT (ADDED FROM FILE 2)
+# -------------------------------------------------------------
+video_deployment:
+  fastapi_port: 8022
+  workers: 1
+
+video_cleanup:
+  temp_dir: "tmp/video_pipeline"
+
+# -------------------------------------------------------------
+# EMAIL (SMTP) — for sending output files to user
+# -------------------------------------------------------------
+# SECURITY: sender_password is intentionally blank here. It is read from
+# the EMAIL_SENDER_PASSWORD environment variable at runtime (set via a
+# local .env file — see .env.example at the repo root). Rotate the
+# previously-committed app password in your Google Account before
+# relying on this again.
+
+email:
+  enabled: true
+  smtp_host: "smtp.gmail.com"
+  smtp_port: 587
+  sender_email: "businessprocess143@gmail.com"
+  sender_password: ""
+  sender_name: "OneNextGen Automation Pvt Ltd"
+
+
+database:
+  enabled: true        # change false -> true
+  server: "localhost"
+  port: 5432
+  username: "postgres"
+  password: ""         # leave blank

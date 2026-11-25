@@ -4,23 +4,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node server.mjs",
+    "dev": "vite Core-App-Frontend --host 0.0.0.0 --port 3000",
     "build": "vite build Core-App-Frontend",
-    "start": "NODE_ENV=production node server.mjs",
+    "start": "vite preview Core-App-Frontend --host 0.0.0.0 --port 3000",
     "lint": "eslint Core-App-Frontend/src || true"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
-    "bcryptjs": "^2.4.3",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.2",
     "framer-motion": "^11.18.2",
-    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^1.25.0",
-    "multer": "^1.4.5-lts.1",
-    "pg": "^8.23.1",
     "postcss": "^8.4.38",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -28,7 +21,6 @@
     "react-router-dom": "^6.24.0",
     "recharts": "^3.10.1",
     "tailwindcss": "^3.4.4",
-    "vite": "^5.3.1",
-    "ws": "^8.18.0"
+    "vite": "^5.3.1"
   }
 }

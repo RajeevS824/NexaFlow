@@ -1,0 +1,285 @@
+###############################################################
+# ORCHESTRATOR — CLIENT
+# Low-level HTTP calls to audio service and video service
+# with retry logic for transient failures
+###############################################################
+
+import asyncio
+import logging
+import time
+from pathlib import Path
+from typing import Optional
+
+import httpx
+import yaml
+
+logger = logging.getLogger("OrchestratorClient")
+
+# ==================================================
+# CONFIG
+# ==================================================
+import os
+
+# PORTABLE PATH: works unchanged on Colab, Kaggle, or a local machine.
+# Resolution order:
+#   1. CONFIG_PATH environment variable, if set (most explicit)
+#   2. <repo>/AudioVideoPipeline/Configuration/config.yaml, derived from
+#      this file's own location (client.py lives in .../Orchestrator/)
+_DEFAULT_CONFIG_PATH = str(
+    Path(__file__).resolve().parent.parent / "Configuration" / "config.yaml"
+)
+
+def _load_config(path: str = None) -> dict:
+    path = path or os.environ.get("CONFIG_PATH", _DEFAULT_CONFIG_PATH)
+
+    try:
+        with open(path, "r") as f:
+            return yaml.safe_load(f)
+    except Exception as e:
+        logger.error(f"Failed to load config from {path}: {e}")
+
+        return {
+            "services": {
+                "audio": {"url": "http://localhost:8001", "timeout_sec": 300},
+                "video": {"url": "http://localhost:8002", "timeout_sec": 600},
+            },
+            "orchestrator": {
+                "poll_interval_sec": 3,
+                "poll_timeout_sec": 60,  # safe fallback, NOT 600
+            },
+            "retry": {
+                "max_attempts": 3,
+                "delay_sec": 2,
+                "backoff_multiplier": 2.0,
+            },
+        }
+config = _load_config()
+
+
+AUDIO_URL        = config["services"]["audio"]["url"]
+VIDEO_URL        = config["services"]["video"]["url"]
+AUDIO_TIMEOUT    = config["services"]["audio"]["timeout_sec"]
+VIDEO_TIMEOUT    = config["services"]["video"]["timeout_sec"]
+POLL_INTERVAL    = config["orchestrator"]["poll_interval_sec"]
+# Env var always wins, same pattern as DB_PASSWORD/OPENROUTER_API_KEY —
+# lets you bump this per-machine (e.g. much higher on a slow CPU-only
+# box) without editing config.yaml.
+POLL_TIMEOUT     = int(os.environ.get("ORCHESTRATOR_POLL_TIMEOUT_SEC") or config["orchestrator"]["poll_timeout_sec"])
+
+# Retry configuration
+_RETRY_CFG = config.get("retry", {})
+_RETRY_MAX_ATTEMPTS = _RETRY_CFG.get("max_attempts", 3)
+_RETRY_DELAY_SEC = _RETRY_CFG.get("delay_sec", 2)
+_RETRY_BACKOFF = _RETRY_CFG.get("backoff_multiplier", 2.0)
+
+logger.info(f"CONFIG LOADED FROM: {config}")
+logger.info(f"POLL_TIMEOUT = {config['orchestrator']['poll_timeout_sec']}")
+
+
+# ==================================================
+# RETRY HELPER
+# ==================================================
+
+def _is_retryable_http_error(exc: Exception) -> bool:
+    """Determine if an HTTP exception is retryable (transient/recoverable)."""
+    if isinstance(exc, (httpx.ConnectError, httpx.TimeoutException, httpx.NetworkError)):
+        return True
+    if isinstance(exc, httpx.HTTPStatusError):
+        status = exc.response.status_code
+        # 429 = rate limit, 5xx = server errors
+        if status == 429 or 500 <= status < 600:
+            return True
+    return False
+
+
+async def _retry_async(operation_name: str, func, *args, max_attempts: int = None, **kwargs):
+    """
+    Retry an async operation with exponential backoff.
+    Returns the operation result on success.
+    Raises the last exception if all attempts fail.
+
+    Retries are idempotent: the same immutable request is re-sent on
+    every attempt, so no duplicate processing can occur.
+    """
+    max_attempts = max_attempts or _RETRY_MAX_ATTEMPTS
+    last_error = None
+    for attempt in range(1, max_attempts + 1):
+        try:
+            logger.info(f"[retry] {operation_name} attempt {attempt}/{max_attempts}")
+            result = await func(*args, **kwargs)
+            if attempt > 1:
+                logger.info(f"[retry] {operation_name} succeeded on attempt {attempt}")
+            return result
+        except Exception as e:
+            last_error = e
+            if _is_retryable_http_error(e) and attempt < max_attempts:
+                backoff = _RETRY_DELAY_SEC * (_RETRY_BACKOFF ** (attempt - 1))
+                logger.warning(f"[retry] {operation_name} attempt {attempt} failed: {type(e).__name__}: {e}")
+                logger.info(f"[retry] {operation_name} retrying in {backoff:.1f}s...")
+                await asyncio.sleep(backoff)
+            else:
+                logger.error(f"[retry] {operation_name} failed after {attempt} attempts: {type(e).__name__}: {e}")
+                break
+    raise last_error
+
+
+# ==================================================
+# AUDIO CLIENT
+# ==================================================
+
+async def submit_audio_job(video_path: str, audio_path: str = None) -> dict:
+    """
+    POST /process to audio service.
+    If audio_path is given, sends the audio file directly (skips extraction).
+    Otherwise sends the video file as before (audio service extracts audio itself).
+    Returns the full JSON response (contains subtitle_file path and segments).
+    """
+    source_path = Path(audio_path) if audio_path else Path(video_path)
+    if not source_path.exists():
+        raise FileNotFoundError(f"File not found: {source_path}")
+
+    content_type = "audio/mpeg" if audio_path else "video/mp4"
+    logger.info(f"Submitting audio job: {source_path.name} (direct_audio={bool(audio_path)})")
+    logger.debug(f"Audio request | url={AUDIO_URL}/process | file={source_path} | "
+                 f"size_bytes={source_path.stat().st_size} | content_type={content_type}")
+
+    async def _do_submit():
+        async with httpx.AsyncClient(timeout=AUDIO_TIMEOUT) as client:
+            with open(source_path, "rb") as f:
+                response = await client.post(
+                    f"{AUDIO_URL}/process",
+                    files={"file": (source_path.name, f, content_type)},
+                )
+
+        response.raise_for_status()
+        result = response.json()
+        logger.info(f"Audio job done | status={result.get('status')} | segments={result.get('segments_count')}")
+        logger.debug(f"Audio response payload: {result}")
+        return result
+
+    result = await _retry_async("audio job submission", _do_submit)
+
+    # Fetch full segments from audio service
+    request_id = result.get("request_id")
+    if request_id:
+        try:
+            async def _fetch_segments():
+                async with httpx.AsyncClient(timeout=30) as seg_client:
+                    seg_response = await seg_client.get(
+                        f"{AUDIO_URL}/segments/{request_id}"
+                    )
+                    seg_response.raise_for_status()
+                    return seg_response.json()
+
+            segments_data = await _retry_async("audio segments fetch", _fetch_segments, max_attempts=2)
+            result["segments"] = segments_data.get("segments", [])
+            logger.info(f"Fetched {len(result['segments'])} segments for {request_id}")
+            logger.debug(f"Segments payload: {result['segments']}")
+        except Exception as e:
+            logger.warning(f"Could not fetch segments: {e}")
+            result["segments"] = []
+
+    return result
+
+# ==================================================
+# VIDEO CLIENT
+# ==================================================
+
+async def submit_video_job(video_path: str) -> str:
+    """
+    POST /submit-job to video service.
+    Returns job_id string.
+    """
+    path = Path(video_path)
+    if not path.exists():
+        raise FileNotFoundError(f"Video not found: {video_path}")
+
+    logger.info(f"Submitting video job: {path.name}")
+    logger.debug(f"Video request | url={VIDEO_URL}/submit-job | file={path} | size_bytes={path.stat().st_size}")
+
+    async def _do_submit():
+        async with httpx.AsyncClient(timeout=60) as client:
+            with open(path, "rb") as f:
+                response = await client.post(
+                    f"{VIDEO_URL}/submit-job",
+                    files={"video": (path.name, f, "video/mp4")},
+                )
+
+        response.raise_for_status()
+        data   = response.json()
+        job_id = data["job_id"]
+        logger.info(f"Video job submitted | job_id={job_id}")
+        logger.debug(f"Video submit response payload: {data}")
+        return job_id
+
+    job_id = await _retry_async("video job submission", _do_submit)
+    return job_id
+
+
+async def poll_video_result(job_id: str) -> dict:
+    """
+    Poll GET /status/{job_id} until status == READY or timeout.
+    Returns the full result dict.
+    """
+    deadline = time.time() + POLL_TIMEOUT
+    attempt  = 0
+    last_status = None
+
+    async with httpx.AsyncClient(timeout=30) as client:
+        while time.time() < deadline:
+            attempt += 1
+            try:
+                response = await client.get(f"{VIDEO_URL}/status/{job_id}")
+                data     = response.json()
+                status   = data.get("status")
+
+                # Every poll at DEBUG (verbose, full payload) — but only
+                # log at INFO when the status actually changes, so normal
+                # operation doesn't spam the log with an identical line
+                # every 3 seconds for a job that can run a long time.
+                logger.debug(f"Video poll #{attempt} | job_id={job_id} | status={status} | payload={data}")
+                if status != last_status:
+                    logger.info(f"Video job {job_id} status changed: {last_status} -> {status} (poll #{attempt})")
+                    last_status = status
+
+                if status == "READY":
+                    return data
+                if status == "FAILED":
+                    raise RuntimeError(f"Video job failed: {data.get('error')}")
+
+            except httpx.HTTPStatusError as e:
+                logger.warning(f"Poll HTTP error: {e}")
+
+            await asyncio.sleep(POLL_INTERVAL)
+
+    raise TimeoutError(f"Video job {job_id} did not complete within {POLL_TIMEOUT}s")
+
+
+# ==================================================
+# HEALTH CHECKS
+# ==================================================
+
+async def check_audio_health() -> bool:
+    async def _do_check():
+        async with httpx.AsyncClient(timeout=5) as client:
+            r = await client.get(f"{AUDIO_URL}/health")
+            return r.status_code == 200
+
+    try:
+        return await _retry_async("audio health check", _do_check, max_attempts=2)
+    except Exception as e:
+        logger.warning(f"Audio health check failed: {e}")
+        return False
+
+
+async def check_video_health() -> bool:
+    async def _do_check():
+        async with httpx.AsyncClient(timeout=5) as client:
+            r = await client.get(f"{VIDEO_URL}/health")
+            return r.status_code == 200
+
+    try:
+        return await _retry_async("video health check", _do_check, max_attempts=2)
+    except Exception as e:
+        logger.warning(f"Video health check failed: {e}")
+        return False

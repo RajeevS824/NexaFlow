@@ -1,0 +1,38 @@
+# ─────────────────────────────────────────────
+# ORCHESTRATOR — REQUIREMENTS
+# ─────────────────────────────────────────────
+
+# FastAPI server
+fastapi>=0.103.0
+uvicorn>=0.23.2
+python-multipart>=0.0.6
+
+# HTTP client to talk to audio_service / video_service
+httpx>=0.25.0
+
+# Config loading
+PyYAML>=6.0.1
+
+# JWT verification — verify the NexaFlow-issued token with the shared secret
+# (bm_security.py / bm_auth.py), same as Document-Parser-Backend.
+PyJWT>=2.0.0
+
+# .env file loading (local secrets/config — see .env.example)
+python-dotenv>=1.0.0
+
+# Word document generation (job_manager.py: from docx import Document)
+python-docx>=1.1.0
+
+# LLM (OpenRouter) calls
+requests>=2.31.0
+
+# Optional durable job storage (database.py) — PostgreSQL.
+# Needs a running PostgreSQL server (the database is created automatically
+# on the first start). Safe to leave installed even if database.enabled
+# stays false in config.yaml.
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.9
+
+# Encrypting customer-supplied LLM API keys at rest (database.py —
+# UserLlmSettings). See LLM_CONFIG_ENCRYPTION_KEY in .env.example.
+cryptography>=42.0.0

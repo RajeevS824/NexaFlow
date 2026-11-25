@@ -1,0 +1,197 @@
+# =============================================================
+# DOCKER CONFIG OVERLAY — AudioVideoPipeline
+# Used by: audio_service, video_service, orchestrator
+#          (selected via CONFIG_PATH env var set in docker-compose.yml)
+#
+# This is a byte-for-byte copy of config.yaml with exactly three
+# differences, all required purely because containers can't reach each
+# other via "localhost" (each container has its own loopback interface —
+# they reach each other via the Docker network using the service name
+# from docker-compose.yml as the hostname):
+#
+#   1. services.audio.url  -> http://audio_service:8001
+#   2. services.video.url  -> http://video_service:8002
+#   3. redis.host          -> "redis"
+#   4. database.enabled    -> true   (mandatory for this deployment)
+#      database.server     -> "sqlserver"
+#
+# No application code was changed to make this work — CONFIG_PATH was
+# already a supported override in every service (job_manager.py,
+# client.py, database.py, pipeline_v3_1_production.py, app.py all read
+# os.environ.get("CONFIG_PATH")). This file is simply a second copy of
+# the config selected via that existing mechanism.
+#
+# DB_PASSWORD is still intentionally left blank here — it is supplied at
+# container-start time via the DB_PASSWORD env var (see docker-compose.yml
+# and .env.example), same override pattern as the native config.
+# =============================================================
+
+# -------------------------------------------------------------
+# SERVICE URLS  (container DNS names, not localhost)
+# -------------------------------------------------------------
+services:
+  audio:
+    url: "http://audio_service:8001"
+    timeout_sec: 1800
+  video:
+    url: "http://video_service:8002"
+    timeout_sec: 1800
+
+# -------------------------------------------------------------
+# REDIS  (container DNS name, not localhost)
+# -------------------------------------------------------------
+redis:
+  host: "redis"
+  port: 6379
+  db: 0
+  enabled: true
+  queue_name_audio: "audio_jobs"
+  queue_name_video: "video_jobs"
+  result_key_audio: "audio_results"
+  result_key_video: "video_results"
+
+# -------------------------------------------------------------
+# ORCHESTRATOR
+# -------------------------------------------------------------
+orchestrator:
+  fastapi_port: 8000
+  poll_interval_sec: 3
+  poll_timeout_sec: 14400
+  run_audio: true
+  run_video: true
+
+# -------------------------------------------------------------
+# OUTPUT PATHS
+# -------------------------------------------------------------
+output:
+  base_dir: "output"
+  audio_json_dir: "output/audio_json"
+  video_json_dir: "output/video_json"
+  report_dir: "output/reports"
+
+# -------------------------------------------------------------
+# AUDIO SERVICE (pipeline_v3_1_production.py)
+# -------------------------------------------------------------
+models:
+  whisper:
+    name: "large-v3"
+    device: "cuda"
+    compute_type: "float16"
+
+audio:
+  max_duration_sec: 3600
+  max_file_size_mb: 500
+  chunk_size_bytes: 1048576
+
+latency_sla:
+  max_inference_sec: 120
+  subprocess_timeout_sec: 30
+
+retry:
+  max_attempts: 3
+  delay_sec: 2
+  backoff_multiplier: 2.0
+
+rate_limiting:
+  enabled: true
+  requests_per_minute: 60
+  burst_allowed: 10
+
+circuit_breaker:
+  failure_threshold: 5
+  recovery_timeout_sec: 60
+
+threading:
+  min_workers: 2
+  max_workers_limit: 32
+
+deployment:
+  fastapi_port: 8001
+  workers: 1
+
+# -------------------------------------------------------------
+# VIDEO SERVICE
+# -------------------------------------------------------------
+pipeline:
+  window_step: 1
+
+# -------------------------------------------------------------
+# LOGGING
+# -------------------------------------------------------------
+logging:
+  level: "INFO"
+  dir: "logs"
+
+# -------------------------------------------------------------
+# CLEANUP
+# -------------------------------------------------------------
+cleanup:
+  temp_dir: "tmp/audio_pipeline"
+
+# -------------------------------------------------------------
+# DATABASE (PostgreSQL) — MANDATORY in this deployment
+# -------------------------------------------------------------
+# enabled: true here (unlike the native config.yaml). DB_ENABLED=true is ALSO
+# set as an env var on the orchestrator container as a belt-and-suspenders
+# override — env vars always win over this file (see database.py), so even if
+# someone points CONFIG_PATH back at the native config.yaml by mistake, the DB
+# stays on.
+# NOTE: "server" below is still the old SQL Server service name. Set it (or the
+# PG_HOST env var) to the host / service name of your PostgreSQL server.
+database:
+  enabled: true
+  server: "sqlserver"
+  port: 5432
+  database: "suppi_db"
+  schema: "public"
+  username: "postgres"
+  password: ""
+
+# -------------------------------------------------------------
+# LLM ANALYSIS — Primary + Secondary API with retry/fallback
+# -------------------------------------------------------------
+llm:
+  retry:
+    max_attempts: 3
+    delay_sec: 2
+    backoff_multiplier: 2.0
+    timeout_sec: 300
+
+  primary:
+    api_key_env: "PRIMARY_LLM_API_KEY"
+    base_url: "https://openrouter.ai/api/v1"
+    model: "cohere/north-mini:free"
+
+  secondary:
+    api_key_env: "SECONDARY_LLM_API_KEY"
+    base_url: ""
+    model_1: ""
+    model_2: ""
+
+  openrouter_api_key: ""
+  model: "cohere/north-mini-code:free"
+
+  chunk_duration_sec: 60
+  chunk_concurrency: 3
+
+
+# -------------------------------------------------------------
+# VIDEO SERVICE DEPLOYMENT
+# -------------------------------------------------------------
+video_deployment:
+  fastapi_port: 8002
+  workers: 1
+
+video_cleanup:
+  temp_dir: "tmp/video_pipeline"
+
+# -------------------------------------------------------------
+# EMAIL (SMTP) — for sending output files to user
+# -------------------------------------------------------------
+email:
+  enabled: true
+  smtp_host: "smtp.gmail.com"
+  smtp_port: 587
+  sender_email: "businessprocess143@gmail.com"
+  sender_password: ""
+  sender_name: "OneNextGen Automation Pvt Ltd"

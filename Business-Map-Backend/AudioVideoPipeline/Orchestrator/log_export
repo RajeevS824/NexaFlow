@@ -1,0 +1,282 @@
+"""
+log_exporter.py
+================
+Reads the shared orchestrator.log file, extracts only the high-level
+events for a specific job_id, and writes a clean, properly-escaped CSV
+to the user's configured log folder (from UserLogSettings in the DB,
+or the default folder if the DB is not enabled).
+
+The exported CSV is an *execution summary* — one meaningful event per
+row — NOT a full debug dump. Verbose lines (per-frame analysis, poll
+retries, intermediate ffprobe/ffmpeg output, raw LLM tokens, etc.) are
+intentionally excluded. The goal is a file a non-engineer can open in
+Excel and immediately understand: what happened, in what order, and
+whether it succeeded.
+
+CSV columns:
+  Timestamp | Level | Module | Event | Status | Message
+"""
+
+import csv
+import logging
+import os
+import re
+from datetime import datetime
+from pathlib import Path
+from typing import Optional
+
+logger = logging.getLogger("LogExporter")
+
+# ------------------------------------------------------------------ #
+#  1.  LOG LINE PARSER                                                 #
+# ------------------------------------------------------------------ #
+# Main log format (set in integrated_pipeline.py basicConfig):
+#   2026-07-30 10:27:23,781 | OrchestratorPipeline | INFO | [UDQK2746] Received: video1sec.mp4 ...
+_LOG_RE = re.compile(
+    r"^(?P<ts>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+)"
+    r"\s*\|\s*(?P<name>[^|]+?)"
+    r"\s*\|\s*(?P<level>[A-Z]+)"
+    r"\s*\|\s*(?P<msg>.+)$"
+)
+
+
+def _parse_line(line: str) -> Optional[dict]:
+    m = _LOG_RE.match(line.rstrip())
+    if not m:
+        return None
+    return {
+        "ts":    m.group("ts"),
+        "name":  m.group("name").strip(),
+        "level": m.group("level").strip(),
+        "msg":   m.group("msg").strip(),
+    }
+
+
+# ------------------------------------------------------------------ #
+#  2.  EVENT CLASSIFIER                                                #
+# ------------------------------------------------------------------ #
+# Each entry: (regex_pattern, event_label, module, status)
+# Lines are tested in order — first match wins, so more-specific
+# patterns must come before more-general ones.
+# Lines that match NO pattern are skipped entirely (excluded from CSV).
+_EVENT_RULES = [
+    # ── Pipeline lifecycle ──────────────────────────────────────────
+    (r"Pipeline started",               "Pipeline Started",         "OrchestratorPipeline", "INFO"),
+    (r"Pipeline done.*status=SUCCESS",  "Processing Completed",     "OrchestratorPipeline", "SUCCESS"),
+    (r"Pipeline done.*status=PARTIAL",  "Processing Completed",     "OrchestratorPipeline", "PARTIAL"),
+    (r"Pipeline done.*status=FAIL",     "Processing Failed",        "OrchestratorPipeline", "ERROR"),
+    (r"Background pipeline error",      "Processing Failed",        "OrchestratorPipeline", "ERROR"),
+    (r"Background pipeline cancelled",  "Processing Cancelled",     "OrchestratorPipeline", "CANCELLED"),
+    (r"Job cancelled by user",          "Processing Cancelled",     "OrchestratorPipeline", "CANCELLED"),
+    (r"User clicked Cancel",            "User Cancelled",           "OrchestratorPipeline", "CANCELLED"),
+    (r"User clicked Continue",          "User Confirmed - Video Only", "OrchestratorPipeline", "INFO"),
+
+    # ── Upload / file receipt ───────────────────────────────────────
+    (r"Received:.*\.mp4",               "Upload Received",          "OrchestratorPipeline", "INFO"),
+    (r"Video upload saved",             "Video Upload Saved",       "OrchestratorPipeline", "INFO"),
+    (r"Audio upload saved",             "Audio Upload Saved",       "OrchestratorPipeline", "INFO"),
+    (r"Upload failed",                  "Upload Failed",            "OrchestratorPipeline", "ERROR"),
+    (r"File size exceeds",              "Upload Rejected - File Too Large", "OrchestratorPipeline", "ERROR"),
+
+    # ── Audio source detection ──────────────────────────────────────
+    (r"Case 1:.*separate audio",        "Audio Source: Separate File",          "OrchestratorPipeline", "INFO"),
+    (r"Case 2:.*embedded audio",        "Audio Source: Embedded Track",         "OrchestratorPipeline", "INFO"),
+    (r"Case 3:.*no.*audio",             "Audio Source: None Detected",          "OrchestratorPipeline", "WARNING"),
+    (r"No audio source available",      "Audio Source: None - Video Only", "OrchestratorPipeline", "INFO"),
+
+    # ── Audio service ───────────────────────────────────────────────
+    (r"Submitting audio job",           "Audio Processing Started",  "OrchestratorClient",   "INFO"),
+    (r"Audio job done.*status=",        "Audio Processing Completed","OrchestratorClient",   "INFO"),
+    (r"audio.*service error",           "Audio Processing Failed",   "OrchestratorClient",   "ERROR"),
+
+    # ── Video service ───────────────────────────────────────────────
+    (r"Submitting video job",           "Video Processing Started",  "OrchestratorClient",   "INFO"),
+    (r"Video job submitted",            "Video Job Queued",          "OrchestratorClient",   "INFO"),
+    (r"Video job.*status changed:.*->.*READY", "Video Processing Completed", "OrchestratorClient", "SUCCESS"),
+    (r"Video job.*status changed:.*->.*FAIL",  "Video Processing Failed",   "OrchestratorClient", "ERROR"),
+    (r"video.*service error",           "Video Processing Failed",   "OrchestratorClient",   "ERROR"),
+    (r"Video job.*did not complete",    "Video Processing Timeout",  "OrchestratorClient",   "ERROR"),
+
+    # ── LLM / report generation ─────────────────────────────────────
+    (r"Running LLM workflow analysis",  "LLM Request Started",       "OrchestratorPipeline", "INFO"),
+    (r"Workflow reports saved",         "Output Generated",          "OrchestratorPipeline", "SUCCESS"),
+    (r"LLM analysis failed",            "LLM Request Failed",        "OrchestratorPipeline", "ERROR"),
+    (r"LLM analysis complete",          "LLM Request Completed",     "JobManager",           "INFO"),
+    (r"Section A clean docx saved",     "Report Saved - Section A", "JobManager",       "SUCCESS"),
+    (r"Section B validation docx saved","Report Saved - Section B", "JobManager",       "SUCCESS"),
+    (r"Case 3.*output generated.*video","Output Generated - Video Only", "JobManager",  "SUCCESS"),
+    (r"Email sent to",                  "Report Emailed",            "JobManager",           "SUCCESS"),
+    (r"Email sending failed",           "Email Failed",              "JobManager",           "ERROR"),
+    (r"Email credentials not configured","Email Skipped - No Credentials","JobManager", "WARNING"),
+
+    # ── LLM retry / fallback events ─────────────────────────────────
+    (r"\[LLM\] Final success.*Model:",  "LLM Request Succeeded",     "JobManager",           "SUCCESS"),
+    (r"\[LLM\] Final failure.*all.*exhausted", "LLM All Providers Failed", "JobManager",     "ERROR"),
+    (r"\[LLM\] Fallback activated",     "LLM Fallback Activated",   "JobManager",           "WARNING"),
+    (r"\[LLM\] Fallback:.*switching to", "LLM Fallback Switching",   "JobManager",           "WARNING"),
+    (r"\[LLM\] Selected API:.*Model:",  "LLM Provider Selected",    "JobManager",           "INFO"),
+    (r"\[LLM\] succeeded on attempt",   "LLM Request Succeeded",    "JobManager",           "SUCCESS"),
+    (r"\[LLM\] failed after.*attempts", "LLM Provider Failed",      "JobManager",           "ERROR"),
+
+    # ── Audio pipeline retry / fallback events ─────────────────────
+    (r"\[retry\].*succeeded on attempt", "Retry Succeeded",         "AudioPipelineV3.1",    "SUCCESS"),
+    (r"\[retry\].*failed after.*attempts", "Retry Failed",          "AudioPipelineV3.1",    "ERROR"),
+    (r"SUCCESS_WITH_FALLBACK",          "Audio Fallback Used",      "AudioPipelineV3.1",    "WARNING"),
+    (r"Audio extraction failed after all retries", "Audio Extraction Failed", "AudioPipelineV3.1", "ERROR"),
+    (r"Whisper transcription failed after all retries", "Whisper Transcription Failed", "AudioPipelineV3.1", "ERROR"),
+
+    # ── Video pipeline retry / fallback events ─────────────────────
+    (r"Inference attempt.*failed.*retrying", "Video Inference Retry", "VideoService",        "WARNING"),
+    (r"GPU inference OOM.*CPU",         "Video GPU Fallback",       "VideoService",         "WARNING"),
+    (r"Semantic judge failed.*SequenceMatcher", "Video Semantic Fallback", "VideoService",  "WARNING"),
+
+    # ── General errors / warnings ───────────────────────────────────
+    (r"ffprobe.*not found",             "ffprobe Missing",           "OrchestratorPipeline", "ERROR"),
+    (r"ffprobe audio-track check failed","Audio Track Check Failed", "OrchestratorPipeline", "ERROR"),
+    (r"User log config applied",        "Log Config Applied",        "OrchestratorPipeline", "INFO"),
+]
+
+# Pre-compile for speed
+_COMPILED_RULES = [
+    (re.compile(pat, re.IGNORECASE), event, module, status)
+    for pat, event, module, status in _EVENT_RULES
+]
+
+
+def _classify(msg: str, level: str) -> Optional[tuple]:
+    """
+    Returns (event, module, status, clean_message) or None if this line
+    should be excluded from the CSV (verbose/debug/retry/internal detail).
+    """
+    for pattern, event, module, status in _COMPILED_RULES:
+        if pattern.search(msg):
+            # Use the classifier's status, but escalate to ERROR if the
+            # raw log line is actually an error regardless of rule default.
+            effective_status = status if status in ("SUCCESS", "PARTIAL", "CANCELLED", "WARNING") \
+                else ("ERROR" if level == "ERROR" else status)
+            return event, module, effective_status, msg
+    return None
+
+
+# ------------------------------------------------------------------ #
+#  3.  LOG FILE READER — filter to one job                            #
+# ------------------------------------------------------------------ #
+
+def _read_job_events(log_file: Path, job_id: str) -> list[dict]:
+    """
+    Reads `log_file` line by line, returns only parsed + classified
+    events that belong to `job_id` (matched by `[job_id]` anywhere in
+    the message), in file order (chronological).
+    """
+    events = []
+    if not log_file.exists():
+        logger.warning(f"Log file not found: {log_file}")
+        return events
+
+    try:
+        with open(log_file, "r", encoding="utf-8", errors="replace") as f:
+            for line in f:
+                parsed = _parse_line(line)
+                if parsed is None:
+                    continue
+                # Only include lines that mention this specific job_id
+                if job_id not in parsed["msg"]:
+                    continue
+                classified = _classify(parsed["msg"], parsed["level"])
+                if classified is None:
+                    continue
+                event, module, status, message = classified
+                events.append({
+                    "Timestamp": parsed["ts"].replace(",", "."),
+                    "Level":     parsed["level"],
+                    "Module":    module,
+                    "Event":     event,
+                    "Status":    status,
+                    "Message":   message,
+                })
+    except OSError as e:
+        logger.error(f"Could not read log file {log_file}: {e}")
+
+    return events
+
+
+# ------------------------------------------------------------------ #
+#  4.  CSV WRITER                                                      #
+# ------------------------------------------------------------------ #
+COLUMNS = ["Timestamp", "Level", "Module", "Event", "Status", "Message"]
+
+
+def export_job_csv(
+    job_id: str,
+    job_name: str,
+    log_file: Path,
+    output_folder: str,
+    final_status: str = "",
+) -> Optional[Path]:
+    """
+    Public entry point. Reads `log_file`, extracts events for `job_id`,
+    and writes a CSV to `output_folder`. Returns the Path of the written
+    file, or None if no events were found or writing failed.
+
+    Called from integrated_pipeline.py's `finally` block in
+    run_full_pipeline_bg, so it runs on every job completion regardless
+    of whether the job succeeded, failed, or was cancelled.
+
+    Parameters
+    ----------
+    job_id        : the short ID, e.g. "UDQK2746"
+    job_name      : human label, used in the output filename
+    log_file      : absolute Path to the orchestrator.log file
+    output_folder : where to write the CSV (from UserLogSettings)
+    final_status  : "SUCCESS" / "FAILED" / "CANCELLED" / "" — appended
+                    as a trailing summary row if provided
+    """
+    events = _read_job_events(log_file, job_id)
+
+    if not events:
+        logger.warning(f"[{job_id}] No classified log events found — CSV not written.")
+        return None
+
+    # Append a summary row at the end so the final status is visible at
+    # a glance without having to scroll to the last "meaningful" row.
+    if final_status:
+        events.append({
+            "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S.000"),
+            "Level":     final_status if final_status in ("ERROR", "WARNING") else "INFO",
+            "Module":    "LogExporter",
+            "Event":     "Export Summary",
+            "Status":    final_status,
+            "Message":   f"Job {job_id} ({job_name}) finished with status: {final_status}",
+        })
+
+    try:
+        folder = Path(output_folder)
+        folder.mkdir(parents=True, exist_ok=True)
+
+        # Filename: <job_name>_<job_id>_<date>.csv — human-readable but
+        # unique across re-runs of the same job name on the same day.
+        date_str  = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_name = re.sub(r"[^\w\-]", "_", job_name)
+        csv_path  = folder / f"{safe_name}_{job_id}_{date_str}.csv"
+
+        with open(csv_path, "w", newline="", encoding="utf-8-sig") as f:
+            # utf-8-sig writes the BOM (byte order mark) that Excel on
+            # Windows requires to auto-detect UTF-8 and render correctly
+            # without the user having to choose an encoding manually.
+            writer = csv.DictWriter(
+                f,
+                fieldnames=COLUMNS,
+                extrasaction="ignore",
+                quoting=csv.QUOTE_ALL,   # quote every field — avoids
+                                          # any ambiguity in Excel with
+                                          # commas/newlines in messages
+            )
+            writer.writeheader()
+            writer.writerows(events)
+
+        logger.info(f"[{job_id}] Log CSV exported: {csv_path} ({len(events)} rows)")
+        return csv_path
+
+    except OSError as e:
+        logger.error(f"[{job_id}] Failed to write CSV to {output_folder}: {e}")
+        return None
