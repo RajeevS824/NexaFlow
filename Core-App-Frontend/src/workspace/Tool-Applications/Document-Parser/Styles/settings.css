@@ -1,0 +1,304 @@
+/* ==========================================
+   SETTINGS PAGE — NexaFlow Design System
+========================================== */
+
+.settings-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #edf1f8;
+  width: 100%;
+  font-family: "Inter", "Space Grotesk", sans-serif;
+}
+
+.settings-container {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+}
+
+.settings-card {
+  width: 100%;
+  max-width: 760px;
+  background: #ffffff;
+  border: 1px solid #dfe5ef;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+/* ==========================================
+   Header
+========================================== */
+
+.settings-header {
+  padding: 22px 24px;
+  border-bottom: 1px solid #dfe5ef;
+}
+
+.settings-header h2 {
+  margin: 0;
+  color: #10202b;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: "Space Grotesk", "Inter", sans-serif;
+}
+
+.settings-header p {
+  margin-top: 6px;
+  color: #5f6f8a;
+  font-size: 12px;
+}
+
+/* ==========================================
+   Body
+========================================== */
+
+.settings-body {
+  padding: 28px;
+}
+
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.settings-group:last-child {
+  margin-bottom: 0;
+}
+
+.settings-group label {
+  margin-bottom: 8px;
+  color: #10202b;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.required {
+  color: #dc2626;
+  margin-left: 4px;
+}
+
+.settings-group input,
+.settings-group select {
+  width: 100%;
+  height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #cfd7e5;
+  border-radius: 8px;
+  outline: none;
+  font-size: 12px;
+  color: #1f2937;
+  background: #fff;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.settings-group input::placeholder {
+  color: #9ca3af;
+}
+
+.settings-group input:focus,
+.settings-group select:focus {
+  border-color: #E8A33D;
+  box-shadow: 0 0 0 3px rgba(232, 163, 61, 0.12);
+}
+
+/* ==========================================
+   Error
+========================================== */
+
+.error-text {
+  margin-top: 6px;
+  color: #dc2626;
+  font-size: var(--font-sm);
+}
+
+/* ==========================================
+   Footer
+========================================== */
+
+.settings-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 18px 28px;
+  border-top: 1px solid #dfe5ef;
+  background: #fafbfd;
+}
+
+/* ==========================================
+   Buttons
+========================================== */
+
+.cancel-btn,
+.save-btn {
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  padding: 10px 22px;
+  white-space: nowrap;
+}
+
+.cancel-btn {
+  background: #EEF3F5;
+  border: none;
+  color: #1B3A4B;
+}
+
+.cancel-btn:hover {
+  background: #D6E1E6;
+}
+
+.save-btn {
+  background: #1B3A4B;
+  border: none;
+  color: #ffffff;
+}
+
+.save-btn:hover {
+  background: #152E3C;
+}
+
+/* ==========================================
+   Responsive
+========================================== */
+
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 16px;
+  }
+
+  .settings-card {
+    max-width: 100%;
+  }
+
+  .settings-header,
+  .settings-body,
+  .settings-footer {
+    padding: 18px;
+  }
+
+  .settings-footer {
+    flex-direction: column;
+  }
+
+  .cancel-btn,
+  .save-btn {
+    width: 100%;
+  }
+}
+
+/* ------------------------------------------- */
+.logging-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.logging-info {
+  margin-top: 8px;
+}
+
+.logging-status {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 8px;
+}
+
+.checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #10202b;
+}
+
+.logging-info-text {
+    display: block;
+    margin-left: 23px;      /* Aligns with checkbox text */
+    margin-top: 2px;
+    font-size: var(--font-sm);
+    color: #64748b;
+    line-height: 1.4;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: #E8A33D;
+}
+
+.logging-message {
+    font-size: var(--font-sm);
+    color: #64748b;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.path-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.path-wrapper input {
+  flex: 1;
+}
+
+.change-btn {
+  width: 80px;
+  height: 40px;
+  border: 1px solid #1B3A4B;
+  border-radius: 8px;
+  background: #fff;
+  color: #1B3A4B;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.change-btn:hover {
+  background: #edf1f8;
+}
+
+.change-btn:active {
+  transform: scale(0.98);
+}
+
+.change-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(232, 163, 61, 0.15);
+}
+
+/* ==========================================
+   ReadOnly / Dimmed Input
+========================================== */
+
+.settings-group input[readOnly] {
+  background: #f1f1f1;
+  color: #000000;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.settings-group input[readOnly]:focus {
+  border-color: #cfd7e5;
+  box-shadow: none;
+}
+
+/* ── NexaFlow select styling ── */
+.settings-select {
+  cursor: pointer;
+}

@@ -1,0 +1,393 @@
+ 
+
+.business-map-app html,
+.business-map-app body,
+.business-map-app #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.business-map-app .dashboard,
+.business-map-app .doc-parser-layout {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.business-map-app .right-section,
+.business-map-app .doc-parser-content {
+  height: 100%;
+  overflow: hidden;
+}
+
+.business-map-app .settings-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%; 
+  background: var(--color-bg-page);
+  width: 100%;
+}
+
+/* One centered column: the cards (Logging, Upload, LLM) are stacked vertically,
+   one per row, like the Document Parser settings page. */
+.business-map-app .settings-container {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  /* Start at the top. Document Parser's global .settings-container rule sets
+     justify-content: center, which (in a column) pushes the first card up under
+     the sticky header where it can't be scrolled to. */
+  justify-content: flex-start;
+  align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  gap: 24px;
+} 
+
+.business-map-app .settings-card {
+  width: 100%;
+  max-width: 760px;
+  flex: 0 0 auto;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--card-radius);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+ 
+
+.business-map-app .settings-header {
+  padding: 22px 28px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.business-map-app .settings-header h2 {
+  margin: 0;
+  color: var(--color-ink-800);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.business-map-app .settings-header p {
+  margin-top: 6px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+ 
+
+.business-map-app .settings-body {
+  padding: 28px;
+}
+
+.business-map-app .settings-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.business-map-app .settings-group:last-child {
+  margin-bottom: 0;
+}
+
+.business-map-app .settings-group label {
+  margin-bottom: 8px;
+  color: var(--color-ink-800);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.business-map-app .required {
+  color: var(--color-danger-dark);
+  margin-left: 4px;
+}
+
+.business-map-app .settings-group input,
+.business-map-app .settings-group select {
+  width: 100%;
+  height: 38px;
+  padding: 8px 9px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--input-radius);
+  outline: none;
+  font-size: 12px;
+  color: var(--color-text-strong);
+  background: #fff;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.business-map-app .settings-group input::placeholder {
+  color: var(--color-text-faint);
+}
+
+.business-map-app .settings-group input:focus,
+.business-map-app .settings-group select:focus {
+  border-color: var(--color-ink-800);
+  box-shadow: 0 0 0 3px rgba(16, 32, 43, 0.08);
+}
+
+ 
+
+.business-map-app .error-text {
+  margin-top: 6px;
+  color: var(--color-danger-dark);
+  font-size: 12px;
+}
+
+ 
+
+.business-map-app .settings-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 18px 28px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+}
+
+ 
+
+.business-map-app .cancel-btn,
+.business-map-app .save-btn {
+  border-radius: var(--input-radius);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  padding: 8px 18px;
+  white-space: nowrap;
+}
+
+.business-map-app .cancel-btn {
+  background: #ffffff;
+  border: 1px solid var(--color-ink-800);
+  color: var(--color-ink-800);
+}
+
+.business-map-app .cancel-btn:hover {
+  background: var(--color-bg-page);
+}
+
+.business-map-app .save-btn {
+  background: var(--color-ink-800);
+  border: 1px solid var(--color-ink-800);
+  color: #ffffff;
+}
+
+.business-map-app .save-btn:hover {
+  background: var(--color-ink-700);
+  border-color: var(--color-ink-700);
+}
+
+.business-map-app .cancel-btn:disabled,
+.business-map-app .save-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+ 
+
+@media (max-width: 768px) {
+  .business-map-app .settings-container {
+    padding: 16px;
+  }
+
+  .business-map-app .settings-card {
+    max-width: 100%;
+  }
+
+  .business-map-app .settings-header,
+  .business-map-app .settings-body,
+  .business-map-app .settings-footer {
+    padding: 18px;
+  }
+
+  .business-map-app .settings-footer {
+    flex-direction: column;
+  }
+
+  .business-map-app .cancel-btn,
+  .business-map-app .save-btn {
+    width: 100%;
+  }
+}
+
+ 
+.business-map-app .logging-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.business-map-app .logging-info {
+  margin-top: 8px;
+}
+
+.business-map-app .logging-status {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 8px;
+}
+
+.business-map-app .checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-ink-800);
+}
+
+.business-map-app .logging-info-text {
+    display: block;
+    margin-left: 23px;       
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+}
+
+.business-map-app .checkbox-wrapper input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    accent-color: var(--color-ink-800);
+}
+
+.business-map-app .logging-message {
+    font-size: 12px;
+    color: var(--color-text-muted);
+     
+    margin-top: -3px;
+    margin-left: -10px;
+    flex: 1;
+}
+
+.business-map-app .path-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.business-map-app .path-wrapper input {
+  flex: 1;
+}
+
+.business-map-app .change-btn {
+  width: 80px;
+  height: 32px;
+  border: 1px solid var(--color-ink-800);
+  border-radius: var(--input-radius);
+  background: #fff;
+  color: var(--color-ink-800);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.business-map-app .change-btn:hover {
+  background: var(--color-bg-page);
+}
+
+.business-map-app .change-btn:active {
+  transform: scale(0.98);
+}
+
+.business-map-app .change-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(16, 32, 43, 0.15);
+}
+
+ 
+
+.business-map-app .settings-banner {
+  font-size: 13px;
+  padding: 10px 14px;
+  border-radius: var(--input-radius);
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+.business-map-app .settings-banner-warning {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-dark);
+  border: 1px solid var(--color-warning-light);
+}
+
+.business-map-app .settings-banner-error {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-dark);
+  border: 1px solid var(--color-danger-light);
+}
+
+.business-map-app .settings-banner-success {
+  background: var(--color-success-bg);
+  color: var(--color-success-dark);
+  border: 1px solid var(--color-success-light);
+}
+
+ 
+
+.business-map-app .llm-radio-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--input-radius);
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.business-map-app .llm-radio-option:hover {
+  border-color: var(--color-ink-800);
+}
+
+.business-map-app .llm-radio-option:has(input:checked) {
+  border-color: var(--color-ink-800);
+  background: var(--color-bg-page);
+}
+
+.business-map-app .llm-radio-option input[type="radio"] {
+  margin-top: 3px;
+  width: 15px;
+  height: 15px;
+  accent-color: var(--color-ink-800);
+  flex-shrink: 0;
+}
+
+.business-map-app .llm-radio-option input[type="radio"]:disabled {
+  cursor: not-allowed;
+}
+
+.business-map-app .llm-radio-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.business-map-app .llm-radio-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-ink-800);
+}
+
+.business-map-app .llm-radio-desc {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.business-map-app .llm-custom-keys {
+  margin-top: 4px;
+  padding-left: 4px;
+}
+
+ 

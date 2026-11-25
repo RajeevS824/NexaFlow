@@ -1,0 +1,137 @@
+ 
+
+.business-map-app .global-header {
+  position: sticky;             
+  top: 0;
+  flex-shrink: 0;               
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 2px solid var(--color-border);
+  padding: 13px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+  z-index: 20;
+}
+
+ 
+.business-map-app .global-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.business-map-app .global-header-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-ink-800);
+  margin: 0;
+  font-family: var(--font-family-display);
+}
+
+.business-map-app .global-header-desc {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+ 
+.business-map-app .global-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+ 
+.business-map-app .btn-primary-dp {
+  background: var(--color-ink-600);
+  color: #fff;
+  border: none;
+  border-radius: var(--input-radius);
+  padding: 6px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+}
+.business-map-app .btn-primary-dp:hover  { background: var(--color-ink-700); }
+.business-map-app .btn-primary-dp:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.business-map-app .btn-secondary-dp {
+  background: var(--color-ink-50);
+  color: var(--color-ink-600);
+  border: none;
+  border-radius: var(--input-radius);
+  padding: 6px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+}
+.business-map-app .btn-secondary-dp:hover { background: var(--color-ink-100); }
+
+.business-map-app .btn-danger-dp {
+  background: var(--color-danger);
+  color: #fff;
+  border: none;
+  border-radius: var(--input-radius);
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.business-map-app .btn-danger-dp:hover { background: var(--color-danger-dark); }
+
+ 
+.business-map-app .btn-icon-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--input-radius);
+  background: var(--color-danger);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.business-map-app .btn-icon-close:hover { background: var(--color-danger-dark); }
+
+ 
+@media (max-width: 768px) {
+  .business-map-app .global-header {
+    padding: 12px 18px;
+  }
+  .business-map-app .global-header-title {
+    font-size: 16px;
+  }
+  .business-map-app .global-header-desc {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .business-map-app .global-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .business-map-app .global-header-actions {
+    width: 100%;
+  }
+}

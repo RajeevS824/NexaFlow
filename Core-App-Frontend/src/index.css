@@ -1,0 +1,165 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------
+   Global base styles - NexaFlow design system
+   ------------------------------------------------------------ */
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  @apply bg-slate-25 text-ink-800 font-body antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  @apply font-display;
+}
+
+/* Visible keyboard focus ring everywhere (accessibility) */
+:focus-visible {
+  outline: 2px solid #e8a33d;
+  outline-offset: 2px;
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Reusable primary button */
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-amber-400
+    px-5 py-3 font-semibold text-ink-800 shadow-sm transition-all duration-200
+    hover:-translate-y-0.5 hover:bg-amber-300 hover:shadow-card
+    active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0;
+}
+
+/* Reusable secondary / ghost button */
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg border border-ink-200
+    bg-white px-5 py-3 font-semibold text-ink-600 transition-all duration-200
+    hover:-translate-y-0.5 hover:bg-ink-50 hover:shadow-sm
+    active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0;
+}
+
+/* Text link styled as a button-adjacent action */
+.link-action {
+  @apply font-semibold text-ink-600 underline-offset-2 hover:underline;
+}
+
+/* Compact primary button - same brand styling as .btn-primary but with
+   tighter padding, used on the auth pages (login / forgot password /
+   reset password) where the card is narrower. */
+.btn-primary-compact {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-amber-400
+    px-4 py-2.5 text-sm font-semibold text-ink-800 shadow-sm transition-all duration-200
+    hover:-translate-y-0.5 hover:bg-amber-300 hover:shadow-card
+    active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0;
+}
+
+/* Compact secondary / ghost button - see .btn-primary-compact above. */
+.btn-secondary-compact {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg border border-ink-200
+    bg-white px-4 py-2.5 text-sm font-semibold text-ink-600 transition-all duration-200
+    hover:-translate-y-0.5 hover:bg-ink-50 hover:shadow-sm
+    active:translate-y-0 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0;
+}
+
+/* ------------------------------------------------------------
+   Hero background (components/HeroBackground.jsx)
+   A slowly drifting dot-grid plus a handful of small rising
+   particles - both are gentle position/opacity fades with no
+   sudden brightness change, so nothing here reads as a flash.
+   ------------------------------------------------------------ */
+@keyframes grid-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 56px 56px;
+  }
+}
+.animate-grid-drift {
+  animation: grid-drift 34s linear infinite;
+}
+
+.hero-particle {
+  position: absolute;
+  border-radius: 9999px;
+  background: #e8a33d;
+  opacity: 0;
+  animation-name: particle-rise;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes particle-rise {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(-140px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-grid-drift,
+  .hero-particle {
+    animation: none !important;
+  }
+}
+
+/* ------------------------------------------------------------
+   Scroll reveal (components/Reveal.jsx + hooks/useReveal.js)
+   Generic fade + slide-up used to animate sections, product
+   rows, and form content into view as the user scrolls.
+   ------------------------------------------------------------ */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ------------------------------------------------------------
+   Header scroll state (components/Header.jsx)
+   Subtle elevation once the page has scrolled past the top, so
+   the sticky header reads as "lifted" above the content.
+   ------------------------------------------------------------ */
+.header-scrolled {
+  box-shadow: 0 8px 30px -12px rgba(16, 32, 43, 0.18);
+}
+
+/* ------------------------------------------------------------
+   Hero workflow animation (components/HeroWorkflowAnimation.jsx)
+   The "chase" dash animation running along the automated
+   workflow path.
+   ------------------------------------------------------------ */
+@keyframes hero-dashflow {
+  to {
+    stroke-dashoffset: -40;
+  }
+}

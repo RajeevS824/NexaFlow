@@ -1,0 +1,82 @@
+#Main -core - app
+
+#main frontend
+/nexaflow/node_modules/
+/nexaflow/dist/
+/nexaflow/dist-ssr/
+/nexaflow/**/*.local
+/nexaflow/.vscode/*
+!/nexaflow/.vscode/extensions.json
+/nexaflow/.DS_Store
+/nexaflow/**/*.log
+/nexaflow/**/npm-debug.log*
+
+# main backend
+/nexaflow-backend/**/__pycache__/
+/nexaflow-backend/**/*.pyc
+/nexaflow-backend/**/*.pyo
+/nexaflow-backend/**/*.egg-info/
+/nexaflow-backend/**/*.log
+/nexaflow-backend/**/.pytest_cache/
+#------------------------------------------------------
+
+#Document parser 
+**/models/
+**/upload/
+**/output/
+#------------------------------------------------------
+
+#business mapper
+/Business-Map-Backend/models/
+/Business-Map-Backend/**/*.log
+/Business-Map-Backend/**/__pycache__/
+/Business-Map-Backend/**/*.pyc
+/Business-Map-Backend/.vscode/
+/Business-Map-Backend/.idea/
+/Business-Map-Backend/AudioVideoPipeline/video_service/tmp/
+
+# Bind-mounted output/logs/tmp created by docker-compose.yml — keep the
+# folders themselves (via .gitkeep) but not their runtime contents.
+/Business-Map-Backend/AudioVideoPipeline/Orchestrator/output/*
+!/Business-Map-Backend/AudioVideoPipeline/Orchestrator/output/.gitkeep
+/Business-Map-Backend/AudioVideoPipeline/Orchestrator/logs/*
+!/Business-Map-Backend/AudioVideoPipeline/Orchestrator/logs/.gitkeep
+/Business-Map-Backend/AudioVideoPipeline/Orchestrator/tmp/*
+!/Business-Map-Backend/AudioVideoPipeline/Orchestrator/tmp/.gitkeep
+/Business-Map-Backend/AudioVideoPipeline/audio_service/output/*
+!/Business-Map-Backend/AudioVideoPipeline/audio_service/output/.gitkeep
+/Business-Map-Backend/AudioVideoPipeline/audio_service/logs/*
+!/Business-Map-Backend/AudioVideoPipeline/audio_service/logs/.gitkeep
+/Business-Map-Backend/AudioVideoPipeline/audio_service/tmp/*
+!/Business-Map-Backend/AudioVideoPipeline/audio_service/tmp/.gitkeep
+/Business-Map-Backend/AudioVideoPipeline/video_service/logs/*
+!/Business-Map-Backend/AudioVideoPipeline/video_service/logs/.gitkeep
+/Business-Map-Backend/AudioVideoPipeline/video_service/tmp/*
+!/Business-Map-Backend/AudioVideoPipeline/video_service/tmp/.gitkeep
+#---------------------------------------------------
+
+
+# Virtual environments
+**/.venv/
+**/venv/
+
+# Node
+**/node_modules/
+
+# Environment files
+**/.env
+**/.env.example
+
+# Build/cache
+**/dist/
+**/build/
+**/_pycache_/
+*/.pyc
+
+
+# Python cache
+**/__pycache__/
+**/*.py[cod]
+
+# Runtime logs
+**/*.log

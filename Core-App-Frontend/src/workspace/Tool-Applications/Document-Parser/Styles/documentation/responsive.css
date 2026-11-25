@@ -1,0 +1,68 @@
+/* ==============================================================
+   Documentation Module — Responsive Styles
+   ============================================================== */
+
+/* ── Tablet ── */
+@media (max-width: 1023px) {
+  .doc-workflow-steps {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .doc-workflow-arrow {
+    transform: rotate(90deg);
+    margin-left: 16px;
+  }
+}
+
+/* ── Mobile ── */
+@media (max-width: 767px) {
+  .doc-card {
+    padding: 16px;
+  }
+
+  .doc-workflow {
+    padding: 16px;
+  }
+
+  .doc-table {
+    font-size: 12px;
+  }
+
+  .doc-table th,
+  .doc-table td {
+    padding: 8px;
+  }
+
+  .doc-sections-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .doc-home-intro {
+    padding: 20px;
+  }
+
+  .doc-home-intro h1 {
+    font-size: 22px;
+  }
+}
+
+/* ── Extra small mobile ── */
+@media (max-width: 480px) {
+  .doc-card {
+    padding: 14px;
+  }
+
+  .doc-card-title {
+    font-size: 16px;
+  }
+
+  .doc-table {
+    font-size: 11px;
+  }
+
+  .doc-table th,
+  .doc-table td {
+    padding: 6px;
+  }
+}

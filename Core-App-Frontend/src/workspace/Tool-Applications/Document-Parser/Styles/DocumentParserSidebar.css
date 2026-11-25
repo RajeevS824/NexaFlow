@@ -1,0 +1,338 @@
+/* ===== Document Parser Sidebar — NexaFlow Design System =====
+   Matches the main sidebar's dark-navy (#10202b) + amber (#E8A33D)
+   palette, Inter/Space Grotesk typography, and compact spacing. */
+
+/* ── Sidebar base ──
+   NOTE: This sidebar lives inside WorkspaceApp's `.right-section`,
+   which itself already sits to the right of the app's global
+   `Sidebar` (see components/Sidebar.jsx + styles/WorkspaceSideBar.css).
+   It must NOT be `position: fixed` — fixed positioning anchors it
+   to the browser viewport's left edge (x:0), which is the SAME
+   spot the global sidebar occupies. That caused this sidebar to
+   render on top of (and hide) the global sidebar, while
+   `.doc-parser-content`'s margin-left compensation still assumed
+   it needed to clear a viewport-anchored sidebar — producing a
+   blank gap between the two exactly as wide as the global sidebar.
+   Keeping this as a normal flex child lets it sit directly next to
+   `.doc-parser-content` wherever the layout actually starts. */
+.doc-parser-sidebar {
+  position: relative;
+  height: 100%;
+  background: #10202b;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+  font-family: "Inter", "Space Grotesk", sans-serif;
+}
+
+/* ── Expanded / Collapsed ── */
+.doc-parser-sidebar.dp-expanded {
+  width: 196px;
+}
+
+.doc-parser-sidebar.dp-collapsed {
+  width: 62px;
+}
+
+/* ── Smooth text fade for nav labels & logo text ── */
+.doc-parser-sidebar .nav-text,
+.doc-parser-sidebar .logo-text {
+  opacity: 1;
+  visibility: visible;
+  white-space: nowrap;
+  transition: opacity 0.2s ease 0.1s, visibility 0.2s ease 0.1s;
+}
+
+.doc-parser-sidebar.dp-collapsed .nav-text,
+.doc-parser-sidebar.dp-collapsed .logo-text {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0s linear 0.15s;
+}
+
+.doc-parser-sidebar .logo-text {
+  overflow: hidden;
+  max-width: 140px;
+  transition: opacity 0.2s ease 0.1s, visibility 0.2s ease 0.1s, max-width 0.3s ease;
+}
+
+.doc-parser-sidebar.dp-collapsed .logo-text {
+  max-width: 0;
+}
+
+/* ── Top / Logo ── */
+.doc-parser-sidebar .sidebar-top {
+  padding: 0;
+}
+
+.doc-parser-sidebar .logo-section {
+  width: 100%;
+}
+
+.doc-parser-sidebar .logo-button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.doc-parser-sidebar.dp-collapsed .logo-button {
+  justify-content: center;
+  padding: 14px 0;
+}
+
+.doc-parser-sidebar .logo-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.doc-parser-sidebar .logo-text h3 {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #fff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.doc-parser-sidebar .logo-text h5 {
+  font-size: 9px;
+  color: #E8A33D;
+  margin: 1px 0 0;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* ── Nav ── */
+.doc-parser-sidebar .nav-menu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 6px 0;
+  overflow-y: auto;
+}
+
+.doc-parser-sidebar .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  border-radius: 6px;
+  margin-bottom: 2px;
+}
+
+.doc-parser-sidebar.dp-collapsed .nav-item {
+  justify-content: center;
+  padding: 9px 0;
+}
+
+.doc-parser-sidebar .nav-item svg {
+  flex-shrink: 0;
+  min-width: 13px;
+  font-size: 13px;
+}
+
+
+.doc-parser-sidebar .nav-item.active {
+  background: rgba(232, 163, 61, 0.14);
+  color: #E8A33D;
+  border-left: 3px solid #E8A33D;
+  padding-left: 6px;
+}
+
+/* ── Submenu ── */
+.doc-parser-sidebar .submenu {
+  margin-left: 11px;
+  padding: 3px 0;
+  transition: margin-left 0.3s ease;
+}
+
+.doc-parser-sidebar.dp-collapsed .submenu {
+  margin-left: 0;
+}
+
+.doc-parser-sidebar .submenu .nav-item {
+  font-size: 11px;
+  padding: 6px 9px;
+}
+
+.doc-parser-sidebar .submenu .nav-item.active {
+  padding-left: 6px;
+}
+
+.doc-parser-sidebar.dp-collapsed .submenu .nav-item {
+  padding: 8px 0;
+}
+
+/* ── Bottom ── */
+.doc-parser-sidebar .sidebar-bottom {
+  padding: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.doc-parser-sidebar.dp-collapsed .sidebar-bottom {
+  padding: 8px 5px;
+}
+
+.doc-parser-sidebar .action-btn {
+  width: 100%;
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  padding: 6px 9px;
+  margin-bottom: 5px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: 0.2s;
+}
+
+.doc-parser-sidebar.dp-collapsed .action-btn {
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.doc-parser-sidebar .action-btn svg {
+  flex-shrink: 0;
+  min-width: 12px;
+  font-size: 12px;
+}
+
+
+.doc-parser-sidebar .nav-section-label {
+  margin: 10px 6px 3px;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(232, 163, 61, 0.85);
+  white-space: nowrap;
+}
+
+.doc-parser-sidebar.dp-collapsed .nav-section-label {
+  display: none;
+}
+
+.doc-parser-sidebar .settings-wrap {
+  position: relative;
+}
+
+.doc-parser-sidebar .action-btn.active {
+  background: rgba(232, 163, 61, 0.16);
+  color: #E8A33D;
+}
+
+.doc-parser-sidebar .settings-chevron {
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+
+.doc-parser-sidebar .settings-chevron.open {
+  transform: rotate(90deg);
+}
+
+.doc-parser-sidebar .settings-menu {
+  position: fixed;
+  bottom: 46px;
+  left: 68px;
+  width: 220px;
+  background: #16303f;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.45);
+  padding: 8px;
+  z-index: 60;
+}
+
+.doc-parser-sidebar.dp-expanded ~ * .settings-menu,
+.doc-parser-sidebar.dp-expanded .settings-menu {
+  left: 202px;
+}
+
+.doc-parser-sidebar .settings-menu-label {
+  margin: 4px 8px 6px;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.doc-parser-sidebar .settings-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 8px 8px;
+  border-radius: 7px;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.doc-parser-sidebar .logout-btn:hover {
+  background: rgba(220, 38, 38, 0.22) !important;
+  color: #fca5a5 !important;
+}
+
+/* ── Responsive: collapse to icon rail automatically on small screens ── */
+@media (max-width: 768px) {
+  .doc-parser-sidebar.dp-expanded {
+    width: 180px;
+  }
+  .doc-parser-sidebar.dp-collapsed {
+    width: 52px;
+  }
+  .doc-parser-sidebar .logo-img {
+    width: 24px;
+    height: 24px;
+  }
+  .doc-parser-sidebar .nav-item {
+    font-size: 11px;
+  }
+  .doc-parser-sidebar .action-btn {
+    font-size: 10.5px;
+  }
+}
+
+/* ── Layout: sidebar + content ──
+   No manual margin-left offset needed anymore: .doc-parser-sidebar
+   is a normal (non-fixed) flex child of .doc-parser-layout, so
+   .doc-parser-content naturally sits right next to it at whatever
+   width the sidebar currently is. */

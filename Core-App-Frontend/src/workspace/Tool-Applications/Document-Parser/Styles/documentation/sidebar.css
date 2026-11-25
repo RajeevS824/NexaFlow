@@ -1,0 +1,10 @@
+/* ==============================================================
+   Documentation Module — Sidebar Styles
+   ============================================================== */
+
+/* ── Documentation sidebar (rendered inside DocumentParserSidebar) ── */
+.doc-nav-section {
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 4px;
+}

@@ -1,0 +1,555 @@
+/* ==============================================================
+   Business Map — common header (Dashboard | Business Flow  +  Bell, Home,
+   Profile) and its Notification / Profile popups.
+   Visual design mirrors the Document Parser header; every rule is scoped to
+   .business-map-app so nothing leaks into other tools.
+   ============================================================== */
+
+.business-map-app .bm-header { padding: 0 28px; height: 54px; min-height: 54px; }
+
+.business-map-app .bm-header-actions { flex-wrap: nowrap; gap: 12px; flex-shrink: 0; }
+
+@keyframes bmFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes bmSlideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 767px) {
+  .business-map-app .bm-header { padding: 0 12px; }
+  .business-map-app .bm-header-actions { gap: 8px; }
+  .business-map-app .bm-notification-btn,
+  .business-map-app .bm-home-btn,
+  .business-map-app .bm-profile-avatar { width: 30px; height: 30px; }
+}
+
+.business-map-app .bm-notification-btn {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--btn-radius);
+  border: 1px solid #E2E8F0;
+  background: #F8FAFC;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.business-map-app .bm-notification-btn:hover {
+  background: #FFFFFF;
+  border-color: #2563EB;
+  color: #2563EB;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.business-map-app .bm-home-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--btn-radius);
+  border: 1px solid #E2E8F0;
+  background: #F8FAFC;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.business-map-app .bm-home-btn:hover {
+  background: #FFFFFF;
+  border-color: #2563EB;
+  color: #2563EB;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.business-map-app .bm-notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #EF4444, #DC2626);
+  border-radius: 50%;
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+}
+
+.business-map-app .bm-profile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--btn-radius);
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: 2px solid transparent;
+}
+
+.business-map-app .bm-profile-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+  border-color: #fff;
+}
+
+.business-map-app .bm-profile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 90px 20px 20px;
+  animation: bmFadeIn 0.2s ease;
+}
+
+.business-map-app .bm-profile-popup {
+  width: 100%;
+  max-width: 380px;
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+  padding: 24px;
+  position: relative;
+  animation: bmSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: "Inter", "Space Grotesk", sans-serif;
+}
+
+.business-map-app .bm-profile-popup-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.business-map-app .bm-profile-popup-close:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.business-map-app .bm-profile-popup-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.business-map-app .bm-profile-popup-avatar {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.business-map-app .bm-profile-popup-titles { min-width: 0;
+}
+
+.business-map-app .bm-profile-popup-name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.business-map-app .bm-profile-popup-email {
+  margin: 3px 0 0;
+  font-size: 13px;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.business-map-app .bm-profile-popup-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 18px 0;
+}
+
+.business-map-app .bm-profile-popup-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.business-map-app .bm-profile-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.business-map-app .bm-profile-field-icon {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.business-map-app .bm-profile-field > div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.business-map-app .bm-profile-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+}
+
+.business-map-app .bm-profile-field-value {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.business-map-app .bm-profile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.business-map-app .bm-profile-stat {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.business-map-app .bm-profile-stat-icon { font-size: 16px;
+}
+
+.business-map-app .bm-profile-stat-icon.blue { color: #2563eb;
+}
+
+.business-map-app .bm-profile-stat-icon.green { color: #10b981;
+}
+
+.business-map-app .bm-profile-stat-icon.purple { color: #8b5cf6;
+}
+
+.business-map-app .bm-profile-stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.business-map-app .bm-profile-stat-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+}
+
+.business-map-app .bm-profile-logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 11px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.business-map-app .bm-profile-logout-btn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+
+.business-map-app .bm-notification-popup {
+  max-width: 440px;
+}
+
+.business-map-app .bm-notification-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.business-map-app .bm-notification-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.business-map-app .bm-notification-title-icon {
+  color: #2563eb;
+  font-size: 16px;
+}
+
+.business-map-app .bm-notification-count {
+  background: #2563eb;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.business-map-app .bm-notification-filters {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.business-map-app .bm-notification-filter-btn {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.business-map-app .bm-notification-filter-btn:hover {
+  background: #e2e8f0;
+}
+
+.business-map-app .bm-notification-filter-btn.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.business-map-app .bm-notification-list {
+  max-height: 360px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.business-map-app .bm-notification-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 28px 12px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.business-map-app .bm-notification-empty-icon {
+  font-size: 30px;
+  color: #cbd5e1;
+}
+
+.business-map-app .bm-notification-empty p {
+  margin: 0;
+  font-size: 13.5px;
+}
+
+.business-map-app .bm-notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 11px 12px;
+  border-left: 3px solid #cbd5e1;
+}
+
+.business-map-app .bm-notification-item.done { border-left-color: #10b981;
+}
+
+.business-map-app .bm-notification-item.err { border-left-color: #ef4444;
+}
+
+.business-map-app .bm-notification-item.run { border-left-color: #2563eb;
+}
+
+.business-map-app .bm-notification-item.wait { border-left-color: #f59e0b;
+}
+
+.business-map-app .bm-notification-item.info { border-left-color: #2563eb;
+}
+
+.business-map-app .bm-notification-item-icon {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.business-map-app .bm-notification-item.done .bm-notification-item-icon { background: #ecfdf5; color: #10b981;
+}
+
+.business-map-app .bm-notification-item.err .bm-notification-item-icon { background: #fef2f2; color: #ef4444;
+}
+
+.business-map-app .bm-notification-item.run .bm-notification-item-icon { background: #eff6ff; color: #2563eb;
+}
+
+.business-map-app .bm-notification-item.wait .bm-notification-item-icon { background: #fffbeb; color: #f59e0b;
+}
+
+.business-map-app .bm-notification-item-body {
+  min-width: 0;
+}
+
+.business-map-app .bm-notification-item-text {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.business-map-app .bm-notification-item-date {
+  display: block;
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: #94a3b8;
+}
+
+.business-map-app .bm-notification-item-delete {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.business-map-app .bm-notification-item-delete:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.business-map-app .bm-notification-item-delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.business-map-app .bm-notification-deleteall {
+  width: 100%;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.business-map-app .bm-notification-deleteall:hover {
+  background: #fee2e2;
+}
+
+.business-map-app .bm-notification-deleteall:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.business-map-app .bm-notification-foot {
+  margin-top: 14px;
+}
+
+.business-map-app .bm-notification-viewall {
+  width: 100%;
+  border: 1px solid #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.business-map-app .bm-notification-viewall:hover {
+  background: #dbeafe;
+}

@@ -1,0 +1,457 @@
+ 
+
+ 
+
+.business-map-app .dash-error {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-dark);
+  border: 1px solid var(--color-danger-light);
+  border-radius: var(--btn-radius);
+  padding: 10px 14px;
+  font-size: 13.5px;
+  margin-bottom: 1rem;
+}
+
+/* Row 1 — the 6 stat cards always sit in ONE row (fixed 6 equal columns,
+   minmax(0, 1fr) so a card can shrink instead of wrapping), same approach as
+   the Document Parser dashboard grid. */
+.business-map-app .dash-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 1rem;
+}
+
+.business-map-app .dash-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  background: #ffffff;
+  border-radius: var(--card-radius);
+  padding: 14px 12px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  border: 1px solid var(--color-border);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.business-map-app .dash-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
+}
+
+.business-map-app .dash-stat-icon {
+  font-size: 22px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--color-bg-subtle);
+  flex-shrink: 0;
+}
+
+.business-map-app .dash-stat-card.total .dash-stat-icon      { background: var(--color-info-bg); }
+.business-map-app .dash-stat-card.processing .dash-stat-icon { background: var(--color-warning-bg); }
+.business-map-app .dash-stat-card.completed .dash-stat-icon  { background: var(--color-success-bg); }
+.business-map-app .dash-stat-card.cancelled .dash-stat-icon  { background: var(--color-bg-subtle); }
+.business-map-app .dash-stat-card.failed .dash-stat-icon     { background: var(--color-danger-bg); }
+.business-map-app .dash-stat-card.success .dash-stat-icon    { background: var(--color-success-bg); color: var(--color-success); }
+
+.business-map-app .dash-stat-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.business-map-app .dash-stat-value {
+  font-size: clamp(18px, 1.6vw, 24px);
+  white-space: nowrap;
+  font-weight: 700;
+  color: var(--color-text-strong);
+  line-height: 1.2;
+}
+
+.business-map-app .dash-stat-label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.business-map-app .dash-hint {
+  margin-top: 1.25rem;
+  font-size: 12.5px;
+  color: var(--color-text-faint);
+}
+
+.business-map-app .dash-stat-icon-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+ 
+
+.business-map-app .dash-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--card-radius);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+  padding: 20px;
+}
+
+.business-map-app .mono {
+  font-family: "IBM Plex Mono", "SFMono-Regular", Menlo, monospace;
+  font-weight: 500;
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+
+ 
+
+/* Row 2 — the three charts share ONE row; Row 3 (Recent Files) is a separate
+   full-width row below (.table-card). */
+.business-map-app .charts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 1.5rem;
+}
+
+.business-map-app .charts-grid > * { min-width: 0; }
+
+.business-map-app .chart-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.business-map-app .chart-card h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  margin: 0 0 2px;
+  color: var(--color-text-strong);
+}
+
+.business-map-app .chart-card p {
+  font-size: 12px;
+  color: var(--color-text-faint);
+  margin: 0;
+}
+
+ 
+
+.business-map-app .lower-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.business-map-app .feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.business-map-app .feed-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 4px;
+  border-radius: var(--btn-radius);
+  transition: background 0.15s;
+}
+
+.business-map-app .feed-row:hover {
+  background: var(--color-bg-subtle);
+}
+
+.business-map-app .feed-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--input-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.business-map-app .feed-icon.primary { background: var(--color-info-bg); color: var(--color-info); }
+.business-map-app .feed-icon.success { background: var(--color-success-bg); color: var(--color-success); }
+.business-map-app .feed-icon.danger  { background: var(--color-danger-bg); color: var(--color-danger); }
+
+.business-map-app .feed-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.business-map-app .feed-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-strong);
+}
+
+.business-map-app .feed-meta {
+  font-size: 11.5px;
+  color: var(--color-text-faint);
+}
+
+.business-map-app .insight-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.business-map-app .insight-metric {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--color-bg-subtle);
+  border-radius: var(--btn-radius);
+  padding: 12px;
+}
+
+.business-map-app .insight-metric-value {
+  font-size: 13.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-strong);
+}
+
+.business-map-app .insight-metric-label {
+  font-size: 11px;
+  color: var(--color-text-faint);
+  margin-top: 2px;
+}
+
+.business-map-app .health-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-success);
+  display: inline-block;
+  box-shadow: 0 0 0 3px var(--color-success-bg);
+}
+
+.business-map-app .ai-insights {
+  background: linear-gradient(135deg, var(--color-info-bg), var(--color-bg-subtle));
+  border-radius: var(--btn-radius);
+  padding: 14px 16px;
+}
+
+.business-map-app .ai-insights-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-info);
+  margin-bottom: 8px;
+}
+
+.business-map-app .ai-insights ul {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.business-map-app .ai-insights li {
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+ 
+
+.business-map-app .table-card {
+  margin-top: 16px;
+  padding: 20px 20px 8px;
+}
+
+.business-map-app .table-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.business-map-app .table-head h3 {
+  font-size: 14.5px;
+  font-weight: 700;
+  margin: 0 0 2px;
+  color: var(--color-text-strong);
+}
+
+.business-map-app .table-head p {
+  font-size: 12px;
+  color: var(--color-text-faint);
+  margin: 0;
+}
+
+.business-map-app .table-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--btn-radius);
+  padding: 0 12px;
+  height: 36px;
+  min-width: 240px;
+}
+
+.business-map-app .table-search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  color: var(--color-text-strong);
+  width: 100%;
+  font-family: inherit;
+}
+
+.business-map-app .table-scroll {
+  overflow-x: auto;
+}
+
+.business-map-app .table-card table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.business-map-app .table-card thead th {
+  text-align: left;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-faint);
+  font-weight: 600;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.business-map-app .th-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.business-map-app .table-card tbody td {
+  padding: 12px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-strong);
+  white-space: nowrap;
+}
+
+.business-map-app .table-card tbody tr:hover {
+  background: var(--color-bg-subtle);
+}
+
+.business-map-app .file-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.business-map-app .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.business-map-app .badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.business-map-app .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 40px 0;
+  color: var(--color-text-faint);
+  font-size: 13px;
+}
+
+.business-map-app .table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 4px;
+  font-size: 12.5px;
+  color: var(--color-text-faint);
+}
+
+.business-map-app .pager {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.business-map-app .pager button {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--input-radius);
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.business-map-app .pager button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.business-map-app .pager button:not(:disabled):hover {
+  background: var(--color-bg-subtle);
+}
+
+ 
+
+/* Only on narrow viewports (below normal desktop widths) the rows reflow. */
+@media (max-width: 1000px) {
+  .business-map-app .dash-stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .business-map-app .charts-grid { grid-template-columns: 1fr; }
+  .business-map-app .lower-grid { grid-template-columns: 1fr; }
+  .business-map-app .insight-metrics { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .business-map-app .dash-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

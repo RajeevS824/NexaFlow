@@ -1,0 +1,234 @@
+/* ==============================================================
+   Business Map — scoped common styles (tokens + shared Modal UI)
+   --------------------------------------------------------------
+   Ported from the standalone project's `styles/commonstyle.css`.
+   The design tokens are re-declared under `.business-map-app` (NOT
+   `:root`) so they apply only inside the Business Map mini-app and
+   cannot clobber the tokens of the NexaFlow shell or Document Parser.
+   The `.bm-modal-*` rules are likewise scoped (the Modal renders
+   inline inside `.business-map-app`).
+   ============================================================== */
+
+.business-map-app {
+  /* ── Brand palette — mirrors the ONG ink/amber scale ── */
+  --color-ink-900: #0a151c;
+  --color-ink-800: #10202b;
+  --color-ink-700: #152e3c;
+  --color-ink-600: #1b3a4b;
+  --color-ink-500: #2c5566;
+  --color-ink-400: #4c7280;
+  --color-ink-300: #7c9da9;
+  --color-ink-200: #aec3cc;
+  --color-ink-100: #d6e1e6;
+  --color-ink-50: #eef3f5;
+
+  --color-amber-500: #d6892a;
+  --color-amber-400: #e8a33d;
+  --color-amber-300: #edbb5d;
+  --color-amber-200: #f3d08a;
+  --color-amber-100: #fae8c3;
+  --color-amber-50: #fdf6e9;
+
+  /* ── Neutral / surface tokens ── */
+  --color-bg-page: #edf1f8;
+  --color-bg-subtle: #f7f8fa;
+  --color-border: #e2e8f0;
+  --color-border-strong: #d1d5db;
+
+  --color-text-strong: #0f172a;
+  --color-text-muted: #64748b;
+  --color-text-faint: #94a3b8;
+
+  /* ── Semantic status colors ── */
+  --color-success: #10b981;
+  --color-success-dark: #065f46;
+  --color-success-light: #6ee7b7;
+  --color-success-bg: #ecfdf5;
+
+  --color-danger: #ef4444;
+  --color-danger-dark: #dc2626;
+  --color-danger-light: #fca5a5;
+  --color-danger-bg: #fef2f2;
+
+  --color-warning: #f59e0b;
+  --color-warning-dark: #92400e;
+  --color-warning-light: #fdecd2;
+  --color-warning-bg: #fff7ed;
+
+  /* "Info / in-progress" accent */
+  --color-info: #6366f1;
+  --color-info-dark: #4f46e5;
+  --color-info-light: #c7d2fe;
+  --color-info-bg: #eef2ff;
+
+  /* ── Typography ── */
+  --font-family-base: "Inter", "Space Grotesk", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-display: "Space Grotesk", "Inter", sans-serif;
+
+  /* ── Spacing & radii ── */
+  --space-sm: 8px;
+  --space-md: 14px;
+  --space-lg: 20px;
+  --space-section: 40px;
+
+  --card-radius: 14px;
+  --btn-radius: 10px;
+  --input-radius: 8px;
+}
+
+.business-map-app .bm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 21, 28, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  padding: 20px;
+}
+
+.business-map-app .bm-modal {
+  width: 100%;
+  max-width: 440px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: var(--card-radius);
+  box-shadow: 0 20px 50px rgba(10, 21, 28, 0.25);
+  padding: 32px 28px 28px;
+  text-align: center;
+  animation: bm-modal-pop 0.18s ease-out;
+}
+
+@keyframes bm-modal-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.business-map-app .bm-modal-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-amber-50);
+  color: var(--color-amber-500);
+  font-size: 24px;
+}
+
+.business-map-app .bm-modal-title {
+  font-family: var(--font-family-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-strong);
+  margin-bottom: 10px;
+}
+
+.business-map-app .bm-modal-body {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  margin-bottom: 18px;
+}
+
+.business-map-app .bm-modal-file-summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.business-map-app .bm-modal-file-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-strong);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.business-map-app .bm-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.business-map-app .bm-modal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: var(--btn-radius);
+  border: 1px solid var(--color-border-strong);
+  background: #fff;
+  color: var(--color-text-strong);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.business-map-app .bm-modal-btn:hover {
+  background: var(--color-bg-subtle);
+}
+
+.business-map-app .bm-modal-btn:active {
+  transform: translateY(1px);
+}
+
+.business-map-app .bm-modal-btn-edit {
+  color: var(--color-text-muted);
+}
+
+.business-map-app .bm-modal-btn-ok {
+  background: var(--color-ink-600);
+  border-color: var(--color-ink-600);
+  color: #fff;
+}
+
+.business-map-app .bm-modal-btn-ok:hover {
+  background: var(--color-ink-700);
+}
+
+.business-map-app .bm-modal-btn-danger {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+  color: #fff;
+}
+
+.business-map-app .bm-modal-btn-danger:hover {
+  background: var(--color-danger-dark);
+}
+
+/* ── Business Map mini-app shell layout ── */
+.business-map-app.business-map-layout {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-bg-page);
+}
+
+.business-map-app .business-map-content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  background: var(--color-bg-page);
+}
+

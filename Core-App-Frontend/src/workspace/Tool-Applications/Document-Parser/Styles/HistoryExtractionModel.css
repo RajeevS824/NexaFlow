@@ -1,0 +1,361 @@
+/* ==========================================
+   HISTORY EXTRACTION MODEL
+   ========================================== */
+
+/* ---------- Page ---------- */
+
+.hem-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: #edf1f8;
+}
+
+/* ---------- Body ---------- */
+
+.hem-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-dp-contentpadding);
+}
+
+/* ---------- Card ---------- */
+
+.hem-card {
+  background: #ffffff;
+  border-radius: var(--card-radius);
+  border: 1px solid #e6ebf5;
+  box-shadow: 0 4px 20px rgba(15, 23, 70, 0.07);
+  padding: var(--card-padding);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.hem-card-title {
+  font-size: var(--font-section-title);
+  font-weight: 700;
+  color: #102a58;
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid #eef2f7;
+}
+
+/* ---------- Table Wrapper ---------- */
+
+.hem-table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: var(--card-radius);
+  border: 1px solid #e8eef5;
+  width: 100%;
+}
+
+/* ==========================================
+   TABLE
+   ========================================== */
+
+.hem-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+/* Column Widths */
+
+.hem-table th:nth-child(1),
+.hem-table td:nth-child(1){
+    width:120px;
+}
+
+.hem-table th:nth-child(2),
+.hem-table td:nth-child(2){
+    width:170px;
+}
+
+.hem-table th:nth-child(3),
+.hem-table td:nth-child(3){
+    width:160px;
+}
+
+.hem-table th:nth-child(4),
+.hem-table td:nth-child(4){
+    width:auto;
+}
+
+.hem-table th:nth-child(5),
+.hem-table td:nth-child(5){
+    width:220px;
+}
+
+.hem-table th:nth-child(6),
+.hem-table td:nth-child(6){
+    width:150px;
+}
+
+.hem-table th:last-child,
+.hem-table td:last-child {
+  min-width: 180px;
+}
+
+.hem-table th {
+  padding:var(--header-padding);
+  border-bottom: 1px solid #e8eef5;
+  font-size:var(--font-table-header);
+  font-weight:var(--font-table-headerweight);
+  text-align: left;
+  color: #253551;
+  white-space: nowrap;
+}
+
+.hem-table td {
+  padding: var(--row-padding);
+  border-bottom: 1px solid #e8eef5;
+  font-size: var(--font-table);
+  color: #253551;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.hem-table td strong {
+  color: #102a58;
+}
+
+.hem-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #F8FAFC;
+  color: #102a58;
+  font-weight: 700;
+  border-bottom:2px solid #E2E8F0;
+}
+
+.hem-table tbody tr{
+    transition:.2s ease;
+}
+
+.hem-table tbody tr:hover{
+    background:#F8FBFF;
+}
+
+.hem-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Actions Column */
+
+
+/* No Data */
+
+.hem-no-data td {
+  text-align: center;
+  color: #6b7280;
+  padding: var(--space-section);
+  font-size: var(--font-normal);
+}
+
+/* ==========================================
+   SEARCH BOX
+   ========================================== */
+
+.table-search {
+  width: 200px;
+  height: 32px;
+  padding: 0 12px;
+  margin-right: var(--space-md);
+  border: 1px solid #d8deea;
+  border-radius: var(--input-radius);
+  font-size: var(--font-input);
+  color: #1f2937;
+  background: #ffffff;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.table-search:focus {
+  border-color: #020a55;
+  box-shadow: 0 0 0 3px rgba(2, 10, 85, 0.08);
+}
+
+.table-search::placeholder {
+  color: #94a3b8;
+}
+
+
+/* Reprocess */
+
+.btn-reprocess {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+.btn-reprocess:hover {
+  background: #d97706;
+}
+
+/* Validate */
+
+.btn-validate {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.btn-validate:hover {
+  background: #1d4ed8;
+}
+
+/* Disabled */
+
+.btn-reprocess:disabled,
+.btn-validate:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+
+  .hem-body {
+    padding: var(--space-md);
+  }
+
+  .hem-card {
+    padding: var(--space-md);
+  }
+
+  .hem-card-title {
+    font-size: 1.125rem;
+  }
+
+  .hem-table-wrap {
+    overflow-x: auto;
+  }
+
+  .hem-table {
+    min-width: 800px;
+  }
+
+  .hem-table th,
+  .hem-table td {
+    padding: 10px 12px;
+  }
+
+  .table-search {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .btn-reprocess,
+  .btn-validate {
+    min-width: 90px;
+    height: 34px;
+    font-size: 0.875rem;
+  }
+}
+
+/* ==========================================
+   HISTORY ACTION BUTTONS
+   ========================================== */
+
+.hem-btn-reprocess,
+.hem-btn-validate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 110px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+/* Reprocess Button */
+
+.hem-btn-reprocess {
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+.hem-btn-reprocess:hover {
+  background: #d97706;
+}
+
+.hem-btn-reprocess:active {
+  background: #b45309;
+}
+
+/* Validate Button */
+
+.hem-btn-validate {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.hem-btn-validate:hover {
+  background: #1d4ed8;
+}
+
+.hem-btn-validate:active {
+  background: #1e40af;
+}
+
+/* Disabled */
+
+.hem-btn-reprocess:disabled,
+.hem-btn-validate:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* Actions Column */
+
+
+/* Action Column */
+
+.hem-table th:last-child,
+.hem-table td:last-child{
+    width:150px;
+    text-align:center;
+    vertical-align:middle;
+}
+
+.hem-table td:last-child{
+    text-align:center;
+    vertical-align:middle;
+}
+
+.hem-action-group{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+
+/* Better Row Height */
+
+.hem-table tbody tr{
+    height:50px;
+}
+
+/* Long Document Name */
+
+.hem-table td:nth-child(4){
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}

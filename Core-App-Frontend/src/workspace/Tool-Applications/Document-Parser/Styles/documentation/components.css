@@ -1,0 +1,181 @@
+/* ==============================================================
+   Documentation Module — Component Styles
+   ============================================================== */
+
+/* ── Section Title ── */
+.doc-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  margin-top: 8px;
+}
+
+.doc-section-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #2563EB;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.doc-section-title h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0;
+}
+
+/* ── Workflow ── */
+.doc-workflow {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.doc-workflow-steps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.doc-workflow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.doc-workflow-step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #2563EB;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.doc-workflow-step-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #0F172A;
+  text-align: center;
+}
+
+.doc-workflow-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563EB;
+  flex-shrink: 0;
+}
+
+/* ── Lists ── */
+.doc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.doc-list li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 10px;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.doc-list li::before {
+  content: "\2022";
+  position: absolute;
+  left: 8px;
+  color: #2563EB;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.doc-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Tables ── */
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+.doc-table thead {
+  background: #f8fafc;
+}
+
+.doc-table th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 700;
+  color: #0F172A;
+  border-bottom: 2px solid #e2e8f0;
+  font-size: 13px;
+}
+
+.doc-table td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.doc-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* ── Info Panel ── */
+.doc-info-panel {
+  background: rgba(37, 99, 235, 0.08);
+  border-left: 4px solid #2563EB;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.doc-info-panel p {
+  margin: 0;
+  color: #1e40af;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ── Note Panel ── */
+.doc-note-panel {
+  background: rgba(245, 158, 11, 0.08);
+  border-left: 4px solid #F59E0B;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.doc-note-panel p {
+  margin: 0;
+  color: #92400e;
+  font-size: 14px;
+  line-height: 1.6;
+}

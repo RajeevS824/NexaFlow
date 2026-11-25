@@ -1,0 +1,140 @@
+/* =============================================
+   GLOBAL HEADER — shared across all pages
+   Import once; use <Header> component everywhere.
+============================================= */
+
+.global-header {
+  position: sticky;            /* sticks to the top of .right-section while it scrolls */
+  top: 0;
+  flex-shrink: 0;              /* never shrinks inside a flex column */
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 13px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+  z-index: 20;
+}
+
+/* ── Left: title + subtitle ── */
+.global-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.global-header-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #10202b;
+  margin: 0;
+  font-family: "Space Grotesk", "Inter", sans-serif;
+}
+
+.global-header-desc {
+  font-size: 13px;
+  color: #5f6f8a;
+  margin: 0;
+}
+
+/* ── Right: action buttons ── */
+.global-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── Button styles (available globally via this sheet) ── */
+.btn-primary-dp {
+  background: #1B3A4B;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+}
+.btn-primary-dp:hover  { background: #152E3C; }
+.btn-primary-dp:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-secondary-dp {
+  background: #EEF3F5;
+  color: #1B3A4B;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+}
+.btn-secondary-dp:hover { background: #D6E1E6; }
+
+.btn-danger-dp {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.btn-danger-dp:hover { background: #dc2626; }
+
+/* Icon-only close button used in SubCreate */
+.btn-icon-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+.btn-icon-close:hover { background: #dc2626; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .global-header {
+    padding: 12px 18px;
+  }
+  .global-header-title {
+    font-size: 16px;
+  }
+  .global-header-desc {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .global-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .global-header-actions {
+    width: 100%;
+  }
+}

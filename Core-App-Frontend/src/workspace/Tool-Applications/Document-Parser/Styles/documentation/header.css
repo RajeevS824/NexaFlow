@@ -1,0 +1,7 @@
+/* ==============================================================
+   Documentation Module — Header Styles
+   ============================================================== */
+
+/* Header styles are inherited from the shared WorkspaceHeader component */
+/* The header is rendered by DocumentationLayout.jsx using the common Header component */
+/* No additional header-specific styles needed for documentation pages */

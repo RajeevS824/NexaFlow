@@ -1,0 +1,576 @@
+ 
+
+ 
+.business-map-app .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+ 
+.business-map-app .fp-page {
+  padding: 2rem 1rem;
+  min-height: calc(100vh - 64px);
+  margin-top: 64px;
+}
+
+ 
+.business-map-app .fp-formats {
+  font-size: 11px;
+  color: var(--color-text-faint);
+  text-align: center;
+  line-height: 1.4;
+}
+
+ 
+.business-map-app .fp-container {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+ 
+.business-map-app .fp-heading {
+  font-size: 16px;
+  font-weight: 500;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 1.25rem;
+}
+
+ 
+.business-map-app .fp-card {
+  background:linear-gradient(135deg, var(--color-info-bg) 0%, var(--color-info-bg) 100%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--card-radius);
+  padding: 2rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.business-map-app .fp-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-strong);
+  margin: 0 0 4px;
+}
+
+.business-map-app .fp-card-subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  margin: 0 0 2rem;
+  line-height: 1.5;
+}
+
+ 
+.business-map-app .fp-upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 1.75rem;
+}
+
+ 
+.business-map-app .fp-upload-zone {
+  background: var(--color-bg-subtle);
+  border: 1.5px dashed var(--color-border-strong);
+  border-radius: var(--card-radius);
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+  text-align: center;
+}
+
+.business-map-app .fp-upload-zone:hover {
+  border-color: var(--color-info);
+  background: var(--color-info-bg);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+}
+
+.business-map-app .fp-upload-zone.has-file {
+  border-style: solid;
+  border-color: var(--color-success);
+  background: var(--color-success-bg);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.08);
+}
+
+ 
+.business-map-app .fp-zone-icon {
+  font-size: 28px;
+  color: var(--color-text-faint);
+  line-height: 1;
+  transition: color 0.18s ease;
+}
+
+.business-map-app .fp-upload-zone:hover .fp-zone-icon {
+  color: var(--color-info);
+}
+
+.business-map-app .fp-upload-zone.has-file .fp-zone-icon {
+  color: var(--color-success);
+}
+
+ 
+.business-map-app .fp-zone-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
+
+.business-map-app .fp-upload-zone.has-file .fp-zone-label {
+  color: var(--color-success-dark);
+}
+
+ 
+.business-map-app .fp-optional-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--color-bg-subtle);
+  color: var(--color-text-faint);
+  border: 1px solid var(--color-border);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: background 0.18s, color 0.18s;
+}
+
+.business-map-app .fp-upload-zone.has-file .fp-optional-badge {
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
+  border-color: var(--color-success-light);
+}
+
+ 
+.business-map-app .fp-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: var(--input-radius);
+  border: 1px solid var(--color-border-strong);
+  background: #ffffff;
+  color: var(--color-text-strong);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.business-map-app .fp-upload-btn:hover {
+  background: var(--color-bg-subtle);
+  border-color: var(--color-text-faint);
+}
+
+.business-map-app .fp-upload-zone.has-file .fp-upload-btn {
+  border-color: var(--color-success-light);
+  color: var(--color-success-dark);
+}
+
+ 
+.business-map-app .fp-filename {
+  font-size: 11.5px;
+  color: var(--color-text-faint);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-height: 16px;
+}
+
+.business-map-app .fp-upload-zone.has-file .fp-filename {
+  color: var(--color-success-dark);
+  font-weight: 500;
+}
+
+ 
+.business-map-app .fp-progress-section {
+  margin-bottom: 1.5rem;
+}
+
+.business-map-app .fp-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.business-map-app .fp-progress-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
+
+.business-map-app .fp-progress-pct {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+ 
+.business-map-app .fp-progress-track {
+  height: 8px;
+  background: var(--color-bg-subtle);
+  border-radius: 99px;
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.business-map-app .fp-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--color-info) 0%, var(--color-success) 100%);
+  transition: width 0.35s ease;
+  width: 0%;
+}
+
+ 
+
+ 
+.business-map-app .fp-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--btn-radius);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  margin-bottom: 1.5rem;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  min-height: 44px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.business-map-app .fp-status.ready {
+  background: var(--color-success-bg);
+  border-color: var(--color-success-light);
+  color: var(--color-success-dark);
+}
+
+.business-map-app .fp-status.error {
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger-light);
+  color: var(--color-danger-dark);
+}
+
+.business-map-app .fp-status i {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+ 
+.business-map-app .fp-divider {
+  border: none;
+  border-top: 1px solid var(--color-bg-subtle);
+  margin: 0 0 1.5rem;
+}
+
+ 
+.business-map-app .fp-actions {
+  display: flex;
+  gap: 10px;
+}
+
+ 
+.business-map-app .fp-btn {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: var(--btn-radius);
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-text-strong);
+  transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+
+.business-map-app .fp-btn:hover {
+  background: var(--color-bg-subtle);
+  border-color: var(--color-border-strong);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.business-map-app .fp-btn:active {
+  transform: scale(0.98);
+}
+
+.business-map-app .fp-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+ 
+.business-map-app .fp-btn.fp-btn-generate {
+  background: #ffffff;
+  border-color: var(--color-info-light);
+  color: var(--color-info-dark);
+}
+
+.business-map-app .fp-btn.fp-btn-generate:hover:not(:disabled) {
+  background: var(--color-info-bg);
+  border-color: var(--color-info);
+}
+
+ 
+.business-map-app .fp-btn.fp-btn-danger {
+  color: var(--color-danger-dark);
+  border-color: var(--color-danger-light);
+  background: #ffffff;
+}
+
+.business-map-app .fp-btn.fp-btn-danger:hover:not(:disabled) {
+  background: var(--color-danger-bg);
+  border-color: var(--color-danger);
+}
+
+ 
+@media (max-width: 600px) {
+  .business-map-app .fp-card {
+    padding: 1.25rem;
+  }
+
+  .business-map-app .fp-upload-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .business-map-app .fp-actions {
+    flex-direction: column;
+  }
+
+  .business-map-app .fp-btn {
+    flex: unset;
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  .business-map-app .fp-card {
+    border-radius: var(--card-radius);
+    padding: 1rem;
+  }
+}
+
+ 
+@media (prefers-reduced-motion: reduce) {
+  .business-map-app .fp-progress-fill,
+  .business-map-app .fp-upload-zone,
+  .business-map-app .fp-btn,
+  .business-map-app .fp-status {
+    transition: none;
+  }
+}
+
+ 
+
+ 
+.business-map-app .fp-heading-block {
+  margin-bottom: 1.5rem;
+}
+
+ 
+.business-map-app .fp-user-details {
+  margin-top: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.business-map-app .fp-user-details-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--color-text-strong);
+  user-select: none;
+}
+
+.business-map-app .fp-user-details-toggle.disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.business-map-app .fp-user-details-toggle:not(.disabled) {
+  cursor: pointer;
+}
+
+.business-map-app .fp-user-details-checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+.business-map-app .fp-user-details-checkbox:not(:disabled) {
+  cursor: pointer;
+}
+
+ 
+.business-map-app .fp-user-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 0.875rem;
+}
+
+.business-map-app .fp-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.business-map-app .fp-field-label {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.business-map-app .fp-field-input {
+  font-size: 14px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--input-radius);
+  background: #ffffff;
+  color: var(--color-text-strong);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.business-map-app .fp-field-input:focus {
+  outline: none;
+  border-color: var(--color-info);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.business-map-app .fp-field-input:disabled {
+  background: var(--color-bg-subtle);
+  cursor: not-allowed;
+}
+
+.business-map-app .fp-field-error {
+  font-size: 12px;
+  color: var(--color-danger-dark);
+  margin-top: 6px;
+}
+
+ 
+.business-map-app .fp-results {
+  margin-top: 1.5rem;
+}
+
+.business-map-app .fp-results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.business-map-app .fp-result-card {
+  padding: 1rem;
+  border-radius: var(--btn-radius);
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.business-map-app .fp-result-label {
+  font-weight: 600;
+  color: var(--color-text-strong);
+  font-size: 14px;
+}
+
+.business-map-app .fp-result-status {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-danger-dark);
+}
+
+.business-map-app .fp-result-status.ready {
+  color: var(--color-success);
+}
+
+.business-map-app .fp-result-status.skipped {
+  color: var(--color-text-faint);
+}
+
+.business-map-app .fp-result-download {
+  margin-top: auto;
+  padding: 5px 12px;
+  border-radius: var(--input-radius);
+  font-size: 12px;
+  background: var(--color-info-bg);
+  color: var(--color-info);
+  border: 1px solid var(--color-info-light);
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-block;
+  text-align: center;
+}
+
+.business-map-app .fp-error-details {
+  margin-top: 1rem;
+}
+
+.business-map-app .fp-error-details summary {
+  cursor: pointer;
+  color: var(--color-warning-dark);
+  font-size: 13px;
+}
+
+.business-map-app .fp-error-details ul {
+  font-size: 12px;
+  color: var(--color-warning-dark);
+  margin-top: 4px;
+}
+
+ 
+@media (max-width: 600px) {
+  .business-map-app .fp-user-fields-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .business-map-app .fp-results-grid {
+    grid-template-columns: 1fr;
+  }
+}
+ 
+ 
+.business-map-app .fp-step-labels-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  margin-bottom: 6px;
+}
+
+.business-map-app .fp-step-label-text {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-border-strong);
+  transition: color 0.25s;
+}
+
+.business-map-app .fp-step-label-text:first-child { text-align: left; }
+.business-map-app .fp-step-label-text:last-child  { text-align: right; }
+
+.business-map-app .fp-step-label-text.done {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.business-map-app .fp-step-label-text.active {
+  color: var(--color-info);
+  font-weight: 600;
+}

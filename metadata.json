@@ -1,0 +1,5 @@
+{
+  "name": "OneNextGenAutomation - NexaFlow",
+  "description": "Enterprise automation platform featuring Business Process Mapper, Document Parser, and Nextflow workflow orchestration with RBAC admin console.",
+  "requestFramePermissions": []
+}

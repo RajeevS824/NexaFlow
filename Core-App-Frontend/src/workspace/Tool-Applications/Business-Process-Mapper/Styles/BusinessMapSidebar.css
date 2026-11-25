@@ -1,0 +1,264 @@
+.business-map-app .sidebar {
+  width: 62px;
+  height: 100vh;
+   
+  background: var(--color-ink-800);
+  color: white;
+  transition: width 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+  font-family: var(--font-family-base);
+}
+
+.business-map-app .sidebar.expanded {
+  width: 196px;
+}
+
+ 
+.business-map-app .logo-button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.business-map-app .sidebar:not(.expanded) .logo-button {
+  justify-content: center;
+  padding: 14px 0;
+}
+
+.business-map-app .logo-img {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.business-map-app .logo-text h3 {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #fff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.business-map-app .logo-text h5 {
+  font-size: 9px;
+  color: var(--color-amber-400);
+  margin: 1px 0 0;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+ 
+.business-map-app .nav-menu {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 6px 0;
+  overflow-y: auto;
+}
+
+.business-map-app .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  border-radius: 6px;
+  margin-bottom: 2px;
+}
+
+.business-map-app .sidebar:not(.expanded) .nav-item {
+  justify-content: center;
+  padding: 9px 0;
+}
+
+.business-map-app .nav-item svg {
+  flex-shrink: 0;
+  min-width: 13px;
+  font-size: 13px;
+}
+
+.business-map-app .nav-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.business-map-app .sidebar.no-hover .nav-item:hover {
+  background: transparent !important;
+  cursor: default !important;
+}
+
+.business-map-app .sidebar.with-hover .nav-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.business-map-app .nav-item.active {
+  background: rgba(232, 163, 61, 0.14);
+  color: var(--color-amber-400);
+  border-left: 3px solid var(--color-amber-400);
+  padding-left: 6px;
+}
+
+ 
+.business-map-app .nav-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Static heading — looks like a menu title, is not interactive. */
+.business-map-app .nav-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  padding-left: 6px;                          /* 9px - 3px border: text does not shift */
+  margin-bottom: 2px;
+  background: rgba(232, 163, 61, 0.14);       /* same golden highlight as the Document Parser active item */
+  color: #E8A33D;
+  border-left: 3px solid #E8A33D;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: default;
+  user-select: none;
+}
+
+.business-map-app .nav-heading svg {
+  flex-shrink: 0;
+  min-width: 13px;
+  font-size: 13px;
+}
+
+.business-map-app .sidebar:not(.expanded) .nav-heading {
+  justify-content: center;
+  padding: 9px 0;
+}
+
+/* Sub-items are ALWAYS shown. Collapsed: no indent/guide line, icons centred
+   (same as the Document Parser collapsed submenu). */
+.business-map-app .nav-subgroup {
+  display: flex;
+  flex-direction: column;
+  margin: 2px 0 4px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  margin-left: 15px;
+  transition: margin-left 0.3s ease, padding-left 0.3s ease;
+}
+
+.business-map-app .nav-subgroup.nav-subgroup-collapsed {
+  margin-left: 0;
+  padding-left: 0;
+  border-left: none;
+}
+
+.business-map-app .nav-subitem {
+  font-size: 11px;
+  padding: 6px 9px;
+}
+
+.business-map-app .nav-subitem svg {
+  font-size: 11px;
+  min-width: 11px;
+}
+
+.business-map-app .nav-subitem.active {
+  padding-left: 6px;
+}
+
+ 
+.business-map-app .sidebar-bottom {
+  padding: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.business-map-app .sidebar:not(.expanded) .sidebar-bottom {
+  padding: 8px 5px;
+}
+
+.business-map-app .action-btn {
+  width: 100%;
+  border: none;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  padding: 6px 9px;
+  margin-bottom: 5px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: 0.2s;
+}
+
+.business-map-app .sidebar:not(.expanded) .action-btn {
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.business-map-app .action-btn svg {
+  flex-shrink: 0;
+  min-width: 12px;
+  font-size: 12px;
+}
+
+.business-map-app .action-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.business-map-app .logout-btn:hover {
+  background: rgba(220, 38, 38, 0.22) !important;
+  color: #fca5a5 !important;
+}
+
+.business-map-app .sidebar.no-hover .action-btn:hover {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+ 
+@media (max-width: 768px) {
+  .business-map-app .sidebar {
+    width: 52px;
+  }
+  .business-map-app .sidebar.expanded {
+    width: 180px;
+  }
+  .business-map-app .logo-img {
+    width: 24px;
+    height: 24px;
+  }
+  .business-map-app .nav-item {
+    font-size: 11px;
+  }
+  .business-map-app .action-btn {
+    font-size: 10.5px;
+  }
+}

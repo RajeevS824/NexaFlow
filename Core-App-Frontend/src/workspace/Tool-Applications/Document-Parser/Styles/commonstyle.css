@@ -1,0 +1,211 @@
+/* ==============================================================
+   Document Parser — Common Style Sheet
+   Shared design tokens + reusable utility classes for every page
+   under src/Tool-Applications/Document-Parser/Pages/*
+
+   Import this FIRST in every Document-Parser page/component, before
+   that page's own stylesheet, e.g.:
+     import "../Styles/commonstyle.css";
+     import "../Styles/documentParser.css";
+
+   NOTE: All the page-level stylesheets in this folder already
+   reference design tokens like `var(--font-section-title)` or
+   `var(--space-md)`. Those variables were never actually defined
+   anywhere in the project, so every rule using them was silently
+   falling back to the browser default — this was the root cause
+   of the inconsistent / broken font sizing across the Document
+   Parser screens. Defining them here (once) fixes every page that
+   already references them, with no other changes required.
+   ============================================================== */
+
+:root {
+  /* ── Typography scale (readable, consistent hierarchy) ── */
+  --font-page-title: 1.75rem;       /* 28px – big dashboard stat numbers        */
+  --font-section-title: 18px;       /* 18px – page/card/modal headings          */
+  --font-chart-title: 15px;         /* 16px – chart & section titles            */
+  --font-body: 0.9375rem;           /* 15px – emphasized body text / icons      */
+  --font-normal: 12px;             /* 12px – base body copy                    */
+  --font-input: 12px;               /* 12px – form input text                  */
+  --font-table-header: 13px;       /* 13px – tableheader  text                   */
+  --font-table: 12px;           /* 12px – table cell text                   */
+  --font-btn: 0.875rem;             /* 14px – button labels                     */
+  --font-sm: 0.75rem;               /* 12px – helper / caption text             */
+  --font-chart-label: 0.75rem;      /* 12px – chart ticks, legends, empty state */
+
+  /* ── Font family (matches rest of the app) ── */
+  --font-family-base: "Inter", "Space Grotesk", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /*--------table----------*/
+  --font-table-headerweight:700;    /* table header weight*/
+  --header-padding: 16px 18px;      /*header padding*/
+  --row-padding:10px;                 /*row padding */
+  --row-height:50px;                /*row height */
+
+  /* ── Spacing scale ── */
+  --space-sm: 8px;
+  --space-md: 14px;
+  --space-lg: 20px;
+  --space-section: 40px;
+  --space-dp-contentpadding: 10px;
+
+  /* ── Radii ── */
+  --card-radius: 14px;
+  --btn-radius: 10px;
+  --input-radius: 8px;
+
+  /* ── Component sizing ── */
+  --btn-height: 35px;
+  --input-height: 36px;
+  --input-padding: 0 12px;
+  --card-padding: 24px;
+  --textarea-min-height: 50px;
+  --header-height: 54px;
+  --max-width-container: 1400px;
+
+  /* ── Icon sizes ── */
+  --icon-header: 14px;
+  --icon-lg: 22px;
+  --icon-md: 18px;
+
+  /* ── Brand palette (kept in one place for reuse) ── */
+  --dp-color-primary: #2563EB;
+  --dp-color-primary-dark: #1D4ED8;
+  --dp-color-navy: #020A55;
+  --dp-color-ink: #0F172A;
+  --dp-color-text-muted: #64748B;
+  --dp-color-text-faint: #94A3B8;
+  --dp-color-border: #E2E8F0;
+  --dp-color-danger: #EF4444;
+  --dp-color-danger-dark: #DC2626;
+  --dp-color-success: #10B981;
+  --dp-color-warning: #F59E0B;
+  --dp-color-bg-page: #EDF1F8;
+}
+
+/* ==============================================================
+   Base
+   ============================================================== */
+.doc-parser-layout,
+.doc-parser-content,
+.dp-dashboard {
+  font-family: var(--font-family-base);
+}
+
+/* ==============================================================
+   Shared utility classes
+   (used to replace inline `style={{ ... }}` across the JSX files)
+   ============================================================== */
+
+/* Visually-hidden native file input trigger (keeps it in the DOM
+   and accessible, just not painted) */
+.dp-visually-hidden-input {
+  display: none;
+}
+
+/* Empty / no-data placeholder text inside charts & lists */
+.dp-empty-state {
+  color: var(--dp-color-text-faint);
+  font-size: var(--font-chart-label);
+  text-align: center;
+  padding: var(--space-lg) 0;
+}
+
+/* Cursor-pointer helper for otherwise non-interactive elements
+   (e.g. the sidebar logo/toggle) */
+.dp-clickable {
+  cursor: pointer;
+}
+
+/* Generic invalid/error state for form inputs — toggle this class
+   instead of writing a conditional inline border color */
+.dp-input-invalid {
+  border: 1px solid var(--dp-color-danger) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+/* Absolutely-positioned drag-selection rectangle used on the
+   document preview canvas. Only left/top/width/height need to stay
+   inline (they're computed from live drag coordinates) — everything
+   static lives here. */
+.dp-selection-box {
+  position: absolute;
+  border: 2px solid var(--dp-color-danger);
+  background: rgba(239, 68, 68, 0.1);
+  pointer-events: none;
+}
+
+/* Zoomable preview image — width % is dynamic (user zoom control),
+   display:block stays static here */
+.dp-zoomable-image {
+  display: block;
+}
+
+/* ==============================================================
+   Shared primary/secondary/danger button look
+   (kept generic — page CSS may still define its own named
+   variants, but new/shared markup can reach for these directly)
+   ============================================================== */
+.dp-btn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: var(--font-btn);
+  height: var(--btn-height);
+  border-radius: var(--btn-radius);
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.dp-btn-primary {
+  background: var(--dp-color-primary);
+  color: #fff;
+}
+.dp-btn-primary:hover {
+  background: var(--dp-color-primary-dark);
+}
+
+.dp-btn-secondary {
+  background: #E5E7EB;
+  color: #111827;
+}
+.dp-btn-secondary:hover {
+  background: #D1D5DB;
+}
+
+.dp-btn-danger {
+  background: var(--dp-color-danger);
+  color: #fff;
+}
+.dp-btn-danger:hover {
+  background: var(--dp-color-danger-dark);
+}
+
+.dp-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==============================================================
+   Disable the app-wide amber :focus-visible ring (src/index.css)
+   inside every Document Parser screen.
+
+   index.css applies:
+     :focus-visible { outline: 2px solid #e8a33d; outline-offset: 2px; }
+
+   That global rule is a design-system default for the public site,
+   but the Document Parser pages define their own focus indicators
+   (border + box-shadow) on inputs, selects, textareas and buttons.
+   This override is scoped to the Document Parser layout (sidebar +
+   all sub-pages) and the settings page, so the amber ring is
+   removed there while staying intact everywhere else.
+   ============================================================== */
+.doc-parser-layout :focus-visible,
+.settings-wrapper :focus-visible {
+  outline: none;
+}
