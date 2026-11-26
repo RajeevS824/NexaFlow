@@ -161,13 +161,13 @@ llm:
 
   # Primary API
   primary:
-    api_key_env: "PRIMARY_LLM_API_KEY"        # env var name (never the key itself)
+    api_key_env: ${OPENROUTER_API_KEY}        # env var name (never the key itself)
     base_url: "https://openrouter.ai/api/v1"
     model: "cohere/north-mini-code:free"
 
   # Secondary API — used if the primary fails after all retries
   secondary:
-    api_key_env: "SECONDARY_LLM_API_KEY"      # env var name (never the key itself)
+    api_key_env: ${OPENROUTER_API_KEY}     # env var name (never the key itself)
     base_url: ""
     model_1: ""
     model_2: ""
@@ -175,7 +175,7 @@ llm:
   # Backward compatibility: the old single-model config is still read
   # by any code that hasn't been updated yet. The structured primary/
   # secondary config above takes precedence.
-  openrouter_api_key: ""
+  openrouter_api_key: ${OPENROUTER_API_KEY}
   model: "cohere/north-mini-code:free"
 
   # Report-generation is split into fixed-size time windows and one LLM call

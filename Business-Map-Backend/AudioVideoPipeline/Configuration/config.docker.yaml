@@ -158,17 +158,17 @@ llm:
     timeout_sec: 300
 
   primary:
-    api_key_env: "PRIMARY_LLM_API_KEY"
+    api_key_env: ${OPENROUTER_API_KEY}
     base_url: "https://openrouter.ai/api/v1"
     model: "cohere/north-mini:free"
 
   secondary:
-    api_key_env: "SECONDARY_LLM_API_KEY"
+    api_key_env: ${OPENROUTER_API_KEY}
     base_url: ""
     model_1: ""
     model_2: ""
 
-  openrouter_api_key: ""
+  openrouter_api_key: ${OPENROUTER_API_KEY}
   model: "cohere/north-mini-code:free"
 
   chunk_duration_sec: 60
